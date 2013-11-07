@@ -32,6 +32,9 @@ In the second and third examples template variables `then` and `now` are used. T
     
 Note that even though the timestamps are provided in UTC the rendered dates and times will be in the local time of the client computer, so each users will always see their local time regardless of where they are located.
 
+Function Reference
+------------------
+
 The supported list of display functions is shown below:
 
 - `moment(timestamp = None).format(format_string)`
@@ -43,10 +46,31 @@ The supported list of display functions is shown below:
 
 Consult the [moment.js documentation](http://momentjs.com/) for details on these functions.
 
+Auto-Refresh
+------------
+
 All the display functions take an optional `refresh` argument that when set to `True` will re-render timestamps every minute. This can be useful for relative time formats such as the one returned by the `fromNow()` or `fromTime()` functions. By default refreshing is disabled.
+
+Internationalization
+--------------------
 
 By default dates and times are rendered in English. To change to a different language add the following line in the `<head>` section after the `include_moment()` line:
 
     {{ moment.lang("es") }}
     
 The above example sets the language to Spanish. Moment.js supports a large number of languages, consult the documentation for the list of languages and their two letter codes.
+
+Ajax Support
+------------
+
+It is also possible to create Flask-Moment timestamps in Python code, for cases where a template is not used. This is the syntax:
+
+    timestamp = moment.create(datetime.utcnow()).calendar()
+
+The `moment` variable is the `Moment` instance that was created at initialization time.
+
+A timestamp created in this way is an HTML string that can be returned as part of a response. For example, here is how a timestamp can be returned in a JSON object:
+
+    return jsonify({ 'timestamp': moment.create(datetime.utcnow()).format('L') })
+
+The Ajax callback in the browser needs to call `flask_moment_render_all()` each time an element containing a timestamp is added to the DOM. The included application demonstrates how this is done.

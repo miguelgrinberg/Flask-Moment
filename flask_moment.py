@@ -11,15 +11,19 @@ class _moment(object):
         return Markup('''%s<script>
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+    $(elem).removeClass('flask-moment');
 }
-$(document).ready(function() {
+function flask_moment_render_all() {
     $('.flask-moment').each(function() {
         flask_moment_render(this);
         if ($(this).data('refresh')) {
             (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
         }
     })
-})
+}
+$(document).ready(function() {
+    flask_moment_render_all();
+});
 </script>''' % js)
 
     @staticmethod
@@ -76,3 +80,6 @@ class Moment(object):
         return {
             'moment': current_app.extensions['moment']
         }
+
+    def create(self, timestamp = None):
+        return current_app.extensions['moment'](timestamp)

@@ -3,6 +3,17 @@
         <title>Flask-Moment example app</title>
         {{ moment.include_jquery() }}
         {{ moment.include_moment() }}
+        <script>
+        function load_ajax_timestamp() {
+            $.ajax({
+                url: '{{ url_for('ajax') }}',
+                dataType: 'json'
+            }).done(function(response) {
+                $('#ajax').append('<p>' + response.timestamp + '</p>');
+                flask_moment_render_all();
+            });
+        }
+        </script>
     </head>
     <body>
         <p>The current date and time is: {{ moment().format('MMMM Do YYYY, h:mm:ss a') }}.</p>
@@ -14,5 +25,7 @@
             This page was rendered on {{ moment(now).format('LLL') }},
             which was {{ moment(now).fromNow(refresh = True) }}.
         </p>
+        <div id="ajax"></div>
+        <a href="#" onclick="load_ajax_timestamp()">Load Ajax timestamp</a>
     </body>
 </html>
