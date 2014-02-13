@@ -18,7 +18,7 @@ Step 2: In your `<head>` section of your base template add the following code:
         {{ moment.include_moment() }}
     </head>
 
-Note that jQuery is required. If you are already including it on your own then you can remove the `include_jquery()` line.
+Note that jQuery is required. If you are already including it on your own then you can remove the `include_jquery()` line. These inclusions are done of secure HTTP if the request under which they are executed is secure.
 
 Step 3: Render timestamps in your template. For example:
 
