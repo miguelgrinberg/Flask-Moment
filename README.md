@@ -18,7 +18,7 @@ Step 2: In your `<head>` section of your base template add the following code:
         {{ moment.include_moment() }}
     </head>
 
-Note that jQuery is required. If you are already including it on your own then you can remove the `include_jquery()` line. These inclusions are done of secure HTTP if the request under which they are executed is secure.
+Note that jQuery is required. If you are already including it on your own then you can remove the `include_jquery()` line. Secure HTTP is used if the request under which these are executed is secure.
 
 Step 3: Render timestamps in your template. For example:
 
@@ -26,9 +26,11 @@ Step 3: Render timestamps in your template. For example:
     <p>Something happened {{ moment(then).fromTime(now) }}.</p>
     <p>{{ moment(then).calendar() }}.</p>
 
-In the second and third examples template variables `then` and `now` are used. These must be instances of Python's `datetime` class, and <u>must be "naive" objects given in UTC timezone</u>. See the [documentation](http://docs.python.org/2/library/datetime.html) for a discussion of naive date and time objects. As an example, `now` can be set as follows:
+In the second and third examples template variables `then` and `now` are used. These must be instances of Python's `datetime` class, and <u>must be "naive" objects</u>. See the [documentation](http://docs.python.org/2/library/datetime.html) for a discussion of naive date and time objects. As an example, `now` can be set as follows:
 
     now = datetime.utcnow()
+
+By default the timestamps will be converted from UTC to the local time in each client's machine before rendering. To disable the conversion to local time pass `local=True`. 
     
 Note that even though the timestamps are provided in UTC the rendered dates and times will be in the local time of the client computer, so each users will always see their local time regardless of where they are located.
 
@@ -37,12 +39,12 @@ Function Reference
 
 The supported list of display functions is shown below:
 
-- `moment(timestamp = None).format(format_string)`
-- `moment(timestamp = None).fromNow(no_suffix = False)`
-- `moment(timestamp = None).fromTime(another_timesatmp, no_suffix = False)`
-- `moment(timestamp = None).calendar()`
-- `moment(timestamp = None).valueOf()`
-- `moment(timestamp = None).unix()`
+- `moment(timestamp=None, local=False).format(format_string)`
+- `moment(timestamp=None, local=False).fromNow(no_suffix = False)`
+- `moment(timestamp=None, local=False).fromTime(another_timesatmp, no_suffix = False)`
+- `moment(timestamp=None, local=False).calendar()`
+- `moment(timestamp=None, local=False).valueOf()`
+- `moment(timestamp=None, local=False).unix()`
 
 Consult the [moment.js documentation](http://momentjs.com/) for details on these functions.
 

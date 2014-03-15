@@ -5,13 +5,13 @@ from flask import current_app, request
 
 class _moment(object):
     @staticmethod
-    def include_moment(version = '2.3.1'):
+    def include_moment(version = '2.5.1'):
         if version is not None:
             if request.is_secure:
-                protocol = 'https'
+                scheme = 'https'
             else:
-                protocol = 'http'
-            js = '<script src="%s://cdnjs.cloudflare.com/ajax/libs/moment.js/%s/moment-with-langs.min.js"></script>\n' % (protocol, version)
+                scheme = 'http'
+            js = '<script src="%s://cdnjs.cloudflare.com/ajax/libs/moment.js/%s/moment-with-langs.min.js"></script>\n' % (scheme, version)
         return Markup('''%s<script>
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
@@ -31,24 +31,28 @@ $(document).ready(function() {
 </script>''' % js)
 
     @staticmethod
-    def include_jquery(version = '1.10.1'):
+    def include_jquery(version = '2.1.0'):
         if request.is_secure:
-            protocol = 'https'
+            scheme = 'https'
         else:
-            protocol = 'http'
-        return Markup('<script src="%s://code.jquery.com/jquery-%s.min.js"></script>' % (protocol, version))
+            scheme = 'http'
+        return Markup('<script src="%s://code.jquery.com/jquery-%s.min.js"></script>' % (scheme, version))
 
     @staticmethod
     def lang(language):
         return Markup('<script>\nmoment.lang("%s");\n</script>' % language)
 
-    def __init__(self, timestamp = None):
+    def __init__(self, timestamp = None, local = False):
         if timestamp is None:
             timestamp = datetime.utcnow()
         self.timestamp = timestamp
+        self.local = local
 
     def _timestamp_as_iso_8601(self, timestamp):
-        return timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
+        tz = ''
+        if not self.local:
+            tz = 'Z'
+        return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
     def _render(self, format, refresh = False):
         t = self._timestamp_as_iso_8601(self.timestamp)

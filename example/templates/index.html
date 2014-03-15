@@ -22,6 +22,10 @@
             That was {{ moment(midnight).calendar() }} in your local time.
         </p>
         <p>
+            Unix epoch is {{ moment(epoch, local=True).format('LLLL') }} in the UTC timezone.
+            That was {{ moment(epoch).format('LLLL') }} in your local time.
+        </p>
+        <p>
             This page was rendered on {{ moment(now).format('LLL') }},
             which was {{ moment(now).fromNow(refresh = True) }}.
         </p>
