@@ -7,11 +7,7 @@ class _moment(object):
     @staticmethod
     def include_moment(version = '2.5.1'):
         if version is not None:
-            if request.is_secure:
-                scheme = 'https'
-            else:
-                scheme = 'http'
-            js = '<script src="%s://cdnjs.cloudflare.com/ajax/libs/moment.js/%s/moment-with-langs.min.js"></script>\n' % (scheme, version)
+            js = '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/%s/moment-with-langs.min.js"></script>\n' % version
         return Markup('''%s<script>
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
