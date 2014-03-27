@@ -35,6 +35,10 @@ $(document).ready(function() {
         return Markup('<script src="%s://code.jquery.com/jquery-%s.min.js"></script>' % (scheme, version))
 
     @staticmethod
+    def include_readable_range():
+        return Markup('<script src="static/readable-range.js"></script>')
+
+    @staticmethod
     def lang(language):
         return Markup('<script>\nmoment.lang("%s");\n</script>' % language)
 
@@ -71,6 +75,9 @@ $(document).ready(function() {
 
     def unix(self, refresh = False):
         return self._render("unix()", refresh)
+
+    def preciseDiff(self, somedate, refresh = False):
+        return self._render("preciseDiff('%s')" % somedate, refresh)
 
 class Moment(object):
     def __init__(self, app = None):

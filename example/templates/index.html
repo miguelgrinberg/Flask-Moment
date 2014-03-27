@@ -3,6 +3,7 @@
         <title>Flask-Moment example app</title>
         {{ moment.include_jquery() }}
         {{ moment.include_moment() }}
+        {{ moment.include_readable_range() }}
         <script>
         function load_ajax_timestamp() {
             $.ajax({
@@ -28,6 +29,9 @@
         <p>
             This page was rendered on {{ moment(now).format('LLL') }},
             which was {{ moment(now).fromNow(refresh = True) }}.
+        </p>
+        <p>
+            Display human-readable representations of date/time range from midnight: {{ moment(now).preciseDiff(midnight) }}
         </p>
         <div id="ajax"></div>
         <a href="#" onclick="load_ajax_timestamp()">Load Ajax timestamp</a>
