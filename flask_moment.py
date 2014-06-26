@@ -6,9 +6,9 @@ from flask import current_app, request
 class _moment(object):
     @staticmethod
     def include_moment(version = '2.5.1'):
+        js = ''
         if version is not None:
             js = '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/%s/moment-with-langs.min.js"></script>\n' % version
-        js = js or ""
         return Markup('''%s<script>
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
