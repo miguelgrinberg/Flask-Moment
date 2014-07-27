@@ -1,14 +1,15 @@
 from datetime import datetime
-import json
 from jinja2 import Markup
 from flask import current_app, request
 
+
 class _moment(object):
     @staticmethod
-    def include_moment(version = '2.5.1'):
+    def include_moment(version='2.5.1'):
         js = ''
         if version is not None:
-            js = '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/%s/moment-with-langs.min.js"></script>\n' % version
+            js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
+                 'moment.js/%s/moment-with-langs.min.js"></script>\n' % version
         return Markup('''%s<script>
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
@@ -28,18 +29,19 @@ $(document).ready(function() {
 </script>''' % js)
 
     @staticmethod
-    def include_jquery(version = '2.1.0'):
+    def include_jquery(version='2.1.0'):
         if request.is_secure:
             scheme = 'https'
         else:
             scheme = 'http'
-        return Markup('<script src="%s://code.jquery.com/jquery-%s.min.js"></script>' % (scheme, version))
+        return Markup(('<script src="%s://code.jquery.com/' +
+                       'jquery-%s.min.js"></script>') % (scheme, version))
 
     @staticmethod
     def lang(language):
         return Markup('<script>\nmoment.lang("%s");\n</script>' % language)
 
-    def __init__(self, timestamp = None, local = False):
+    def __init__(self, timestamp=None, local=False):
         if timestamp is None:
             timestamp = datetime.utcnow()
         self.timestamp = timestamp
@@ -51,30 +53,35 @@ $(document).ready(function() {
             tz = 'Z'
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
-    def _render(self, format, refresh = False):
+    def _render(self, format, refresh=False):
         t = self._timestamp_as_iso_8601(self.timestamp)
-        return Markup('<span class="flask-moment" data-timestamp="%s" data-format="%s" data-refresh="%d">%s</span>' % (t, format, int(refresh) * 60000, t))
+        return Markup(('<span class="flask-moment" data-timestamp="%s" ' +
+                       'data-format="%s" data-refresh="%d">%s</span>') %
+                      (t, format, int(refresh) * 60000, t))
 
-    def format(self, fmt, refresh = False):
+    def format(self, fmt, refresh=False):
         return self._render("format('%s')" % fmt, refresh)
 
-    def fromNow(self, no_suffix = False, refresh = False):
+    def fromNow(self, no_suffix=False, refresh=False):
         return self._render("fromNow(%s)" % int(no_suffix), refresh)
 
-    def fromTime(self, timestamp, no_suffix = False, refresh = False):
-        return self._render("from(moment('%s'),%s)" % (self._timestamp_as_iso_8601(timestamp),int(no_suffix)), refresh)
+    def fromTime(self, timestamp, no_suffix=False, refresh=False):
+        return self._render("from(moment('%s'),%s)" %
+                            (self._timestamp_as_iso_8601(timestamp),
+                             int(no_suffix)), refresh)
 
-    def calendar(self, refresh = False):
+    def calendar(self, refresh=False):
         return self._render("calendar()", refresh)
 
-    def valueOf(self, refresh = False):
+    def valueOf(self, refresh=False):
         return self._render("valueOf()", refresh)
 
-    def unix(self, refresh = False):
+    def unix(self, refresh=False):
         return self._render("unix()", refresh)
 
+
 class Moment(object):
-    def __init__(self, app = None):
+    def __init__(self, app=None):
         if app is not None:
             self.init_app(app)
 
@@ -90,5 +97,5 @@ class Moment(object):
             'moment': current_app.extensions['moment']
         }
 
-    def create(self, timestamp = None):
+    def create(self, timestamp=None):
         return current_app.extensions['moment'](timestamp)
