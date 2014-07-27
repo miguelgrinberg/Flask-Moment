@@ -20,6 +20,8 @@ Step 2: In your `<head>` section of your base template add the following code:
 
 Note that jQuery is required. If you are already including it on your own then you can remove the `include_jquery()` line. Secure HTTP is used if the request under which these are executed is secure.
 
+The `include_jquery()` and `include_moment()` methods take two optional arguments. If you pass `version`, then the requested version will be loaded from the CDN. If you pass `local_js`, then the given local path will be used to load the library.
+
 Step 3: Render timestamps in your template. For example:
 
     <p>The current date and time is: {{ moment().format('MMMM Do YYYY, h:mm:ss a') }}.</p>

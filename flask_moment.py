@@ -1,13 +1,15 @@
 from datetime import datetime
 from jinja2 import Markup
-from flask import current_app, request
+from flask import current_app
 
 
 class _moment(object):
     @staticmethod
-    def include_moment(version='2.5.1'):
+    def include_moment(version='2.5.1', local_js=None):
         js = ''
-        if version is not None:
+        if local_js is not None:
+            js = '<script src="%s"></script>\n' % local_js
+        elif version is not None:
             js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
                  'moment.js/%s/moment-with-langs.min.js"></script>\n' % version
         return Markup('''%s<script>
@@ -29,13 +31,14 @@ $(document).ready(function() {
 </script>''' % js)
 
     @staticmethod
-    def include_jquery(version='2.1.0'):
-        if request.is_secure:
-            scheme = 'https'
+    def include_jquery(version='2.1.0', local_js=None):
+        js = ''
+        if local_js is not None:
+            js = '<script src="%s"></script>\n' % local_js
         else:
-            scheme = 'http'
-        return Markup(('<script src="%s://code.jquery.com/' +
-                       'jquery-%s.min.js"></script>') % (scheme, version))
+            js = ('<script src="//code.jquery.com/' +
+                  'jquery-%s.min.js"></script>') % version
+        return Markup(js)
 
     @staticmethod
     def lang(language):
