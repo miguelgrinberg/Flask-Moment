@@ -12,7 +12,7 @@ class _moment(object):
         elif version is not None:
             js_filename = 'moment-with-locales.min.js' if StrictVersion(version) >= StrictVersion('2.8.0') else 'moment-with-langs.min.js'
             js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
-                 'moment.js/%s/moment-with-langs.min.js"></script>\n' % (version, js_filename)
+                 'moment.js/%s/%s"></script>\n' % (version, js_filename)
         return Markup('''%s<script>
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
