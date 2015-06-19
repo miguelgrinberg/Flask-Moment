@@ -5,7 +5,7 @@ from distutils.version import StrictVersion
 
 class _moment(object):
     @staticmethod
-    def include_moment(version='2.5.1', local_js=None):
+    def include_moment(version='2.10.3', local_js=None):
         js = ''
         if local_js is not None:
             js = '<script src="%s"></script>\n' % local_js
