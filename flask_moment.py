@@ -1,3 +1,4 @@
+from distutils.version import StrictVersion
 from datetime import datetime
 from jinja2 import Markup
 from flask import current_app
@@ -10,10 +11,13 @@ class _moment(object):
         if local_js is not None:
             js = '<script src="%s"></script>\n' % local_js
         elif version is not None:
-            js_filename = 'moment-with-locales.min.js' if StrictVersion(version) >= StrictVersion('2.8.0') else 'moment-with-langs.min.js'
+            js_filename = 'moment-with-locales.min.js' \
+                if StrictVersion(version) >= StrictVersion('2.8.0') \
+                else 'moment-with-langs.min.js'
             js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
                  'moment.js/%s/%s"></script>\n' % (version, js_filename)
         return Markup('''%s<script>
+moment.locale("en");
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
     $(elem).removeClass('flask-moment');
@@ -42,8 +46,12 @@ $(document).ready(function() {
         return Markup(js)
 
     @staticmethod
+    def locale(language):
+        return Markup('<script>\nmoment.locale("%s");\n</script>' % language)
+
+    @staticmethod
     def lang(language):
-        return Markup('<script>\nmoment.lang("%s");\n</script>' % language)
+        return _moment.locale(language)
 
     def __init__(self, timestamp=None, local=False):
         if timestamp is None:
