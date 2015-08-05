@@ -20,7 +20,7 @@ class _moment(object):
 moment.locale("en");
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
-    $(elem).removeClass('flask-moment');
+    $(elem).removeClass('flask-moment').show();
 }
 function flask_moment_render_all() {
     $('.flask-moment').each(function() {
@@ -68,7 +68,8 @@ $(document).ready(function() {
     def _render(self, format, refresh=False):
         t = self._timestamp_as_iso_8601(self.timestamp)
         return Markup(('<span class="flask-moment" data-timestamp="%s" ' +
-                       'data-format="%s" data-refresh="%d">%s</span>') %
+                       'data-format="%s" data-refresh="%d" ' +
+                       'style="display: none">%s</span>') %
                       (t, format, int(refresh) * 60000, t))
 
     def format(self, fmt, refresh=False):
