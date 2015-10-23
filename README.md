@@ -36,7 +36,7 @@ The `include_jquery()` and `include_moment()` methods take two optional argument
 
 Step 3: Render timestamps in your template. For example:
 
-    <p>The current date and time is: {{ moment().format('MMMM Do YYYY, h:mm:ss a') }}.</p>
+    <p>The current date and time is: {{ moment(live_timestamp=True).format('MMMM Do YYYY, h:mm:ss a') }}.</p>
     <p>Something happened {{ moment(then).fromTime(now) }}.</p>
     <p>{{ moment(then).calendar() }}.</p>
 
@@ -44,17 +44,20 @@ In the second and third examples template variables `then` and `now` are used. T
 
     now = datetime.utcnow()
 
-By default the timestamps will be converted from UTC to the local time in each client's machine before rendering. To disable the conversion to local time pass `local=True`. 
-    
+By default the timestamps will be converted from UTC to the local time in each client's machine before rendering. To disable the conversion to local time pass `local=True`.
+
 Note that even though the timestamps are provided in UTC the rendered dates and times will be in the local time of the client computer, so each users will always see their local time regardless of where they are located.
+
+In the first example, the parameter `live_timestamp` is used so the timestamp will be updated to use the current timestamp (instead of the time at which the page was rendered). This allows to, for example, show a clock.
 
 Function Reference
 ------------------
 
-The supported list of display functions is shown below:
+The supported list of display functions is as follows:
 
 - `moment(timestamp=None, local=False).format(format_string)`
 - `moment(timestamp=None, local=False).fromNow(no_suffix = False)`
+- `moment(timestamp=None, local=False).toNow(no_suffix = False)`
 - `moment(timestamp=None, local=False).fromTime(another_timesatmp, no_suffix = False)`
 - `moment(timestamp=None, local=False).calendar()`
 - `moment(timestamp=None, local=False).valueOf()`
@@ -65,7 +68,18 @@ Consult the [moment.js documentation](http://momentjs.com/) for details on these
 Auto-Refresh
 ------------
 
-All the display functions take an optional `refresh` argument that when set to `True` will re-render timestamps every minute. This can be useful for relative time formats such as the one returned by the `fromNow()` or `fromTime()` functions. By default refreshing is disabled.
+All the display functions take an optional `refresh` argument that when set to a value larger than zero will re-render timestamps every <value> seconds. This can be useful for relative time formats such as the one returned by the `fromNow()` or `fromTime()` functions, or for showing a live clock. By default refreshing is disabled.
+
+Live timestamp
+------------
+
+With `live` the current timestamp is used, allowing to do things like creating clocks:
+
+Even though this updates every second, it will always show the time at which the page was rendered:
+    {{ moment(now).format('HH:mm:ss', refresh=True, refresh_rate=1) }}
+
+This will show the current time and updates it every second:
+    {{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=1) }}
 
 Internationalization
 --------------------
@@ -73,7 +87,7 @@ Internationalization
 By default dates and times are rendered in English. To change to a different language add the following line in the `<head>` section after the `include_moment()` line:
 
     {{ moment.lang("es") }}
-    
+
 The above example sets the language to Spanish. Moment.js supports a large number of languages, consult the documentation for the list of languages and their two letter codes.
 
 Ajax Support
