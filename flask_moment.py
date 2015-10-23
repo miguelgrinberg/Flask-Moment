@@ -25,7 +25,8 @@ function flask_moment_render(elem) {
 function flask_moment_render_all() {
     $('.flask-moment').each(function() {
         flask_moment_render(this);
-        if ($(this).data('refresh')) {
+        if ($(this).data('refresh') && !$(this).data('has_timer)) {
+            $(this).data('has_timer', true);
             (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
         }
     })
