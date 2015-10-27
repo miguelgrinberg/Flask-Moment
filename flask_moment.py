@@ -19,7 +19,7 @@ class _moment(object):
         return Markup('''%s<script>
 moment.locale("en");
 function flask_moment_render(elem) {
-    if($(elem).data('is-clock') === "True"){ $(elem).text(eval('moment().' + $(elem).data('format') + ';')); }
+    if($(elem).data('live-timestamp') === "True"){ $(elem).text(eval('moment().' + $(elem).data('format') + ';')); }
     else { $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';')); }
     $(elem).removeClass('flask-moment').show();
 }
@@ -55,12 +55,12 @@ $(document).ready(function() {
     def lang(language):
         return _moment.locale(language)
 
-    def __init__(self, timestamp=None, local=False, use_now=False):
+    def __init__(self, timestamp=None, local=False, live_timestamp=False):
         if timestamp == None:
             timestamp = datetime.utcnow()
         self.timestamp = timestamp
         self.local = local
-        self.use_now = use_now
+        self.live_timestamp = live_timestamp
 
     def _timestamp_as_iso_8601(self, timestamp):
         tz = ''
@@ -71,9 +71,9 @@ $(document).ready(function() {
     def _render(self, format, refresh=False):
         t = self._timestamp_as_iso_8601(self.timestamp)
         return Markup(('<span class="flask-moment" data-timestamp="{0}" ' +
-                   'data-format="{1}" data-refresh="{2}" data-is-clock="{3}" ' +
+                   'data-format="{1}" data-refresh="{2}" data-live-timestamp="{3}" ' +
                    'style="display: none">{4}</span>').format(
-                    t, format, int(refresh) * 1000, self.use_now, t))
+                    t, format, int(refresh) * 1000, self.live_timestamp, t))
 
     def format(self, fmt, refresh=False):
         return self._render("format('%s')" % fmt, refresh)
