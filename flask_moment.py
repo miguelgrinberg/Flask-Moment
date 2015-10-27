@@ -81,6 +81,9 @@ $(document).ready(function() {
     def fromNow(self, no_suffix=False, refresh=False):
         return self._render("fromNow(%s)" % int(no_suffix), refresh)
 
+    def toNow(self, no_suffix=False, refresh=False):
+        return self._render("toNow(%s)" % int(no_suffix), refresh)
+
     def fromTime(self, timestamp, no_suffix=False, refresh=False):
         return self._render("from(moment('%s'),%s)" %
                             (self._timestamp_as_iso_8601(timestamp),
