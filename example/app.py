@@ -16,7 +16,7 @@ def index():
 
 @app.route('/ajax')
 def ajax():
-    return jsonify({ 'timestamp': moment.create(datetime.utcnow()).format('LLLL') });
+    return jsonify({ 'timestamp': moment.create(datetime.utcnow()).format('dddd, MMMM Do YYYY LTS ') });
 
 if __name__ == '__main__':
     app.run(debug = True)
