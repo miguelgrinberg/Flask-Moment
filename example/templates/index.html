@@ -16,18 +16,29 @@
         </script>
     </head>
     <body>
-        <p>The current date and time is: {{ moment().format('MMMM Do YYYY, h:mm:ss a') }}.</p>
+    Even though this updates every second, it will always show the time at which the page was rendered:
+    {{ moment(now).format('HH:mm:ss', refresh=1) }}
+
+This will show the current time and updates it every second:
+    {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=1) }}
+
         <p>
-            {{ moment(midnight).fromTime(now) }} it was midnight in the UTC timezone. 
+            This page was rendered on {{ moment(now).format('LLL') }},
+            which was {{ moment(live_timestamp=True).fromNow(refresh=60) }}.
+        </p>
+        <p>The current date and time is: {{ moment(live_timestamp=True).format('MMMM Do YYYY, h:mm:ss a', refresh=1) }}.</p>
+        <p>
+            This clock is updated every second: {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=1) }}.<br />
+            This clock is updated every ten seconds: {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=10) }}.<br />
+            This clock does not update: {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=False) }}.
+        </p>
+        <p>
+            {{ moment(midnight).fromTime(now) }} it was midnight in the UTC timezone.<br />
             That was {{ moment(midnight).calendar() }} in your local time.
         </p>
         <p>
-            Unix epoch is {{ moment(epoch, local=True).format('LLLL') }} in the UTC timezone.
+            Unix epoch is {{ moment(epoch, local=True).format('LLLL') }} in the UTC timezone.<br />
             That was {{ moment(epoch).format('LLLL') }} in your local time.
-        </p>
-        <p>
-            This page was rendered on {{ moment(now).format('LLL') }},
-            which was {{ moment(now).fromNow(refresh = True) }}.
         </p>
         <div id="ajax"></div>
         <a href="#" onclick="load_ajax_timestamp()">Load Ajax timestamp</a>
