@@ -56,7 +56,7 @@ Consult the [moment.js documentation](http://momentjs.com/) for details on these
 Auto-Refresh
 ------------
 
-All the display functions take an optional `refresh` argument that when set to a value larger than zero will re-render timestamps every &lt;value&gt; seconds. This can be useful for relative time formats such as the one returned by the `fromNow()` or `fromTime()` functions, or for showing a live clock. By default refreshing is disabled.
+All the display functions take an optional `refresh` argument that when set to a value larger than zero will re-render timestamps every <value> seconds. This can be useful for relative time formats such as the one returned by the `fromNow()` or `fromTime()` functions, or for showing a live clock. By default refreshing is disabled.
 
 Live timestamp
 ------------
