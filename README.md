@@ -18,6 +18,18 @@ Step 2: In your `<head>` section of your base template add the following code:
         {{ moment.include_moment() }}
     </head>
 
+This extension also supports the [Flask application factory pattern](http://flask.pocoo.org/docs/latest/patterns/appfactories/) by allowing you to create a Moment object and then separately initialize it for an app:
+
+        moment = Moment()
+
+        def create_app(config):
+            app = Flask(__name__)
+            app.config.from_object(config)
+            # initialize moment on the app within create_app()
+            moment.init_app(app)
+
+        app = create_app(prod_config)
+
 Note that jQuery is required. If you are already including it on your own then you can remove the `include_jquery()` line. Secure HTTP is used if the request under which these are executed is secure.
 
 The `include_jquery()` and `include_moment()` methods take two optional arguments. If you pass `version`, then the requested version will be loaded from the CDN. If you pass `local_js`, then the given local path will be used to load the library.
