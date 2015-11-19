@@ -8,7 +8,7 @@ Quick Start
 
 Step 1: Initialize the extension:
 
-    from flask.ext.moment import Moment
+    from flask_moment import Moment
     moment = Moment(app)
 
 Step 2: In your `<head>` section of your base template add the following code:
