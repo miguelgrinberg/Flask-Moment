@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Flask, render_template, jsonify
-from flask.ext.moment import Moment
+from flask_moment import Moment
 
 app = Flask(__name__)
 moment = Moment(app)
