@@ -12,7 +12,8 @@ def index():
     now = datetime.utcnow()
     midnight = datetime(now.year, now.month, now.day, 0, 0, 0)
     epoch = datetime(1970, 1, 1, 0, 0, 0)
-    return render_template('index.html', now=now, midnight=midnight, epoch=epoch)
+    live = 'live'
+    return render_template('index.html', now=now, midnight=midnight, epoch=epoch, live=live)
 
 @app.route('/ajax')
 def ajax():

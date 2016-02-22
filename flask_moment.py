@@ -3,7 +3,6 @@ from datetime import datetime
 from jinja2 import Markup
 from flask import current_app
 
-
 class _moment(object):
     @staticmethod
     def include_moment(version='2.10.3', local_js=None):
@@ -55,12 +54,16 @@ $(document).ready(function() {
     def lang(language):
         return _moment.locale(language)
 
-    def __init__(self, timestamp=None, local=False, live_timestamp=False):
-        if timestamp == None:
+    def __init__(self, timestamp=None, local=False):
+
+        self.live_timestamp = False
+        if timestamp == None or timestamp == 'live':
+            if timestamp == 'live':
+                self.live_timestamp = True
             timestamp = datetime.utcnow()
+
         self.timestamp = timestamp
         self.local = local
-        self.live_timestamp = live_timestamp
 
     def _timestamp_as_iso_8601(self, timestamp):
         tz = ''
@@ -68,35 +71,35 @@ $(document).ready(function() {
             tz = 'Z'
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
-    def _render(self, format, refresh=False):
+    def _render(self, format, refresh=False, refresh_rate=60):
         t = self._timestamp_as_iso_8601(self.timestamp)
         return Markup(('<span class="flask-moment" data-timestamp="{0}" ' +
                    'data-format="{1}" data-refresh="{2}" data-live-timestamp="{3}" ' +
                    'style="display: none">{4}</span>').format(
-                    t, format, int(refresh) * 1000, self.live_timestamp, t))
+                    t, format, int(refresh) * (refresh_rate*1000), self.live_timestamp, t))
 
-    def format(self, fmt, refresh=False):
-        return self._render("format('%s')" % fmt, refresh)
+    def format(self, fmt, refresh=False, refresh_rate=60):
+        return self._render("format('%s')" % fmt, refresh, refresh_rate)
 
-    def fromNow(self, no_suffix=False, refresh=False):
-        return self._render("fromNow(%s)" % int(no_suffix), refresh)
+    def fromNow(self, no_suffix=False, refresh=False, refresh_rate=60):
+        return self._render("fromNow(%s)" % int(no_suffix), refresh, refresh_rate)
 
-    def toNow(self, no_suffix=False, refresh=False):
-        return self._render("toNow(%s)" % int(no_suffix), refresh)
+    def toNow(self, no_suffix=False, refresh=False, refresh_rate=60):
+        return self._render("toNow(%s)" % int(no_suffix), refresh, refresh_rate)
 
-    def fromTime(self, timestamp, no_suffix=False, refresh=False):
+    def fromTime(self, timestamp, no_suffix=False, refresh=False, refresh_rate=60):
         return self._render("from(moment('%s'),%s)" %
                             (self._timestamp_as_iso_8601(timestamp),
-                             int(no_suffix)), refresh)
+                             int(no_suffix)), refresh, refresh_rate)
 
-    def calendar(self, refresh=False):
-        return self._render("calendar()", refresh)
+    def calendar(self, refresh=False, refresh_rate=60):
+        return self._render("calendar()", refresh, refresh_rate)
 
-    def valueOf(self, refresh=False):
-        return self._render("valueOf()", refresh)
+    def valueOf(self, refresh=False, refresh_rate=60):
+        return self._render("valueOf()", refresh, refresh_rate)
 
-    def unix(self, refresh=False):
-        return self._render("unix()", refresh)
+    def unix(self, refresh=False, refresh_rate=60):
+        return self._render("unix()", refresh, refresh_rate)
 
 
 class Moment(object):

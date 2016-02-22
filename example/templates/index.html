@@ -3,44 +3,130 @@
         <title>Flask-Moment example app</title>
         {{ moment.include_jquery() }}
         {{ moment.include_moment() }}
-        <script>
-        function load_ajax_timestamp() {
+        <style type="text/css">
+            body{
+                font-family: arial;
+            }
+            .wrapper{
+                width: 800px;
+                margin: auto;
+            }
+            code, .output{
+                display: block;
+                padding: 10px;
+                border: 1px solid #cccccc;
+                background-color: #eeeeee;
+                font-family: courier;
+            }
+            .output{
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <h1>Flask-Moment</h1>
+            <h3>Getting started</h3>
+            <p>Include Flask-Moment and its jQuery bindings to the <b>&lt;head&gt;</b> of your page. If you want to use a local version of jquery, use the <b>local_js</b> parameter. Omit this parameter to use the jquery CDN</p>
+            <code>
+                <span>{</span>{ moment.include_jquery() }}<br />
+                <span>{</span>{ moment.include_moment() }}
+            </code>
+            <p>or</p>
+            <code>
+                <span>{</span>{ moment.include_jquery( local_js="/path/to/local/jquery.js" ) }}<br />
+                <span>{</span>{ moment.include_moment() }}
+            </code>
+
+            <h3>Now</h3>
+            <p> If you want to use the time at which the page was rendered, use <b>now</b>.</p>
+            <code>This page was rendered on <b><span>{</span>{ moment(now).format('LLL') }}</b>.</code>
+            <span class="output">This page was rendered on <b>{{ moment().format('LLL') }}</b>.</span>
+
+            <h3>Refresh</h3>
+            <p>You can use the optional <b>refresh</b> argument to automatically update and redraw the time difference. By default, a refresh is done once every 60 seconds.</p>
+            <code>This page was rendered <b><span>{</span>{ moment(now).fromNow(refresh=True) }}</b>.</code>
+            <span class="output">This page was rendered <b>{{ moment(now).fromNow(refresh=True) }}</b>.</span>
+
+            <h3>Live</h3>
+            <p>When you need the current time, you can use <b>live</b> instead:</p>
+            <code>
+                Current time, refreshing every minute: <b><span>{</span>{ moment(live).format('HH:mm:ss', refresh=True) }}</b><br />
+            </code>
+            <span class="output">
+                Current time, refreshing every minute: <b>{{ moment(live).format('HH:mm:ss', refresh=True) }}</b><br />
+            </span>
+
+            <h3>Refresh_rate</h3>
+            <p>By default <b>refresh</b> triggers an update every minute. You can set the update speed (in seconds) using <b>refresh_rate</b>:</p>
+            <code>
+                Current time, refreshing every second: <b><span>{</span>{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=1) }}</b>
+            </code>
+            <span class="output">
+                Current time, refreshing every second: <b>{{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=1) }}</b>
+            </span>
+
+
+            <h3>Ajax</h3>
+            <p>Flask-Moment can also be used for ajax calls:</p>
+            <div id="ajax"></div>
+            <a href="#" id="ajaxLink">Load Ajax timestamp</a>
+
+
+            <h3>Examples</h3>
+            <code>The current date and time is: <b><span>{</span>{ moment(live).format('MMMM Do YYYY, h:mm:ss a', refresh=True, refresh_rate=1) }}</b></code>
+            <span class="output">The current date and time is: <b>{{ moment(live).format('MMMM Do YYYY, h:mm:ss a', refresh=True, refresh_rate=1) }}</b></span>
+
+            <br />
+
+            <code>
+                Clock: update every second: <b><span>{</span>{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=1) }}</b><br />
+                Clock, update every minute: <b><span>{</span>{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=60) }}</b><br />
+                Clock, update every hour: <b><span>{</span>{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=360) }}</b>
+            </code>
+
+            <span class="output">
+                Clock: update every second: <b>{{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=1) }}</b><br />
+                Clock, update every minute: <b>{{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=60) }}</b><br />
+                Clock, update every hour: <b>{{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=360) }}</b>
+            </span>
+
+            <br />
+
+            <code>
+                <b><span>{</span>{ moment(midnight).fromTime(now) }}</b> it was midnight in the UTC timezone.<br />
+                That was <b><span>{</span>{ moment(midnight).calendar() }}</b> in your local time.
+            </code>
+            <span class="output">
+                <b>{{ moment(midnight).fromTime(now) }}</b> it was midnight in the UTC timezone.<br />
+                That was <b>{{ moment(midnight).calendar() }}</b> in your local time.
+            </span>
+
+            <br />
+
+            <code>
+                Unix epoch is <b><span>{</span>{ moment(epoch, local=True).format('LLLL') }}<b> in the UTC timezone.<br />
+                That was <b><span>{</span>{ moment(epoch).format('LLLL') }}<b> in your local time.
+            </code>
+            <span class="output">
+                Unix epoch is <b>{{ moment(epoch, local=True).format('LLLL') }}<b> in the UTC timezone.<br />
+                That was <b>{{ moment(epoch).format('LLLL') }}<b> in your local time.
+            </span>
+        </b>
+
+        <script type="text/javascript">
+        $('#ajaxLink').click(function(event) {
+            event.preventDefault();
+            console.log("go");
             $.ajax({
                 url: '{{ url_for('ajax') }}',
                 dataType: 'json'
             }).done(function(response) {
-                $('#ajax').append('<p>' + response.timestamp + '</p>');
+                $('#ajax').append('<span class="output">' + response.timestamp + '</span>');
                 flask_moment_render_all();
             });
-        }
+        });
         </script>
-    </head>
-    <body>
-    Even though this updates every second, it will always show the time at which the page was rendered:
-    {{ moment(now).format('HH:mm:ss', refresh=1) }}
 
-This will show the current time and updates it every second:
-    {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=1) }}
-
-        <p>
-            This page was rendered on {{ moment(now).format('LLL') }},
-            which was {{ moment(live_timestamp=True).fromNow(refresh=60) }}.
-        </p>
-        <p>The current date and time is: {{ moment(live_timestamp=True).format('MMMM Do YYYY, h:mm:ss a', refresh=1) }}.</p>
-        <p>
-            This clock is updated every second: {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=1) }}.<br />
-            This clock is updated every ten seconds: {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=10) }}.<br />
-            This clock does not update: {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=False) }}.
-        </p>
-        <p>
-            {{ moment(midnight).fromTime(now) }} it was midnight in the UTC timezone.<br />
-            That was {{ moment(midnight).calendar() }} in your local time.
-        </p>
-        <p>
-            Unix epoch is {{ moment(epoch, local=True).format('LLLL') }} in the UTC timezone.<br />
-            That was {{ moment(epoch).format('LLLL') }} in your local time.
-        </p>
-        <div id="ajax"></div>
-        <a href="#" onclick="load_ajax_timestamp()">Load Ajax timestamp</a>
     </body>
 </html>

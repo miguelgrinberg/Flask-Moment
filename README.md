@@ -61,13 +61,13 @@ All the display functions take an optional `refresh` argument that when set to a
 Live timestamp
 ------------
 
-When using `live_timestamp`, the used timestamp will be overwritten with the current one, allowing to do things like showing clocks:
+With `live` the current timestamp is used, allowing to do things like creating clocks:
 
 Even though this updates every second, it will always show the time at which the page was rendered:
-    {{ moment(now).format('HH:mm:ss', refresh=1) }}
+    {{ moment(now).format('HH:mm:ss', refresh=True, refresh_rate=1) }}
 
 This will show the current time and updates it every second:
-    {{ moment(live_timestamp=True).format('HH:mm:ss', refresh=1) }}
+    {{ moment(live).format('HH:mm:ss', refresh=True, refresh_rate=1) }}
 
 Internationalization
 --------------------
