@@ -36,7 +36,7 @@ The `include_jquery()` and `include_moment()` methods take two optional argument
 
 Step 3: Render timestamps in your template. For example:
 
-    <p>The current date and time is: {{ moment(live_timestamp=True).format('MMMM Do YYYY, h:mm:ss a') }}.</p>
+    <p>The current date and time is: {{ moment(now).format('MMMM Do YYYY, h:mm:ss a') }}.</p>
     <p>Something happened {{ moment(then).fromTime(now) }}.</p>
     <p>{{ moment(then).calendar() }}.</p>
 
@@ -47,8 +47,6 @@ In the second and third examples template variables `then` and `now` are used. T
 By default the timestamps will be converted from UTC to the local time in each client's machine before rendering. To disable the conversion to local time pass `local=True`.
 
 Note that even though the timestamps are provided in UTC the rendered dates and times will be in the local time of the client computer, so each users will always see their local time regardless of where they are located.
-
-In the first example, the parameter `live_timestamp` is used so the timestamp will be updated to use the current timestamp (instead of the time at which the page was rendered). This allows to, for example, show a clock.
 
 Function Reference
 ------------------
@@ -68,7 +66,7 @@ Consult the [moment.js documentation](http://momentjs.com/) for details on these
 Auto-Refresh
 ------------
 
-All the display functions take an optional `refresh` argument that when set to a value larger than zero will re-render timestamps every <value> seconds. This can be useful for relative time formats such as the one returned by the `fromNow()` or `fromTime()` functions, or for showing a live clock. By default refreshing is disabled.
+All the display functions take an optional `refresh` argument that when set to `True` will re-render the timestamp every 60 seconds. You can set the interval using `refresh_rate=<seconds>`. This can be useful for relative time formats such as the one returned by the `fromNow()` or `fromTime()` functions, or for showing a live clock. By default refreshing is disabled.
 
 Live timestamp
 ------------
