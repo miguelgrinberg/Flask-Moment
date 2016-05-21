@@ -6,7 +6,7 @@ from flask import current_app
 
 class _moment(object):
     @staticmethod
-    def include_moment(version='2.10.3', local_js=None):
+    def include_moment(version='2.13.0', local_js=None):
         js = ''
         if local_js is not None:
             js = '<script src="%s"></script>\n' % local_js
@@ -36,7 +36,7 @@ $(document).ready(function() {
 </script>''' % js)
 
     @staticmethod
-    def include_jquery(version='2.1.0', local_js=None):
+    def include_jquery(version='2.2.4', local_js=None):
         js = ''
         if local_js is not None:
             js = '<script src="%s"></script>\n' % local_js
