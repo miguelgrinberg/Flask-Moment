@@ -14,7 +14,7 @@ class _moment(object):
             js_filename = 'moment-with-locales.min.js' \
                 if StrictVersion(version) >= StrictVersion('2.8.0') \
                 else 'moment-with-langs.min.js'
-            js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
+            js = '<script src="https//cdnjs.cloudflare.com/ajax/libs/' \
                  'moment.js/%s/%s"></script>\n' % (version, js_filename)
         return Markup('''%s<script>
 moment.locale("en");
@@ -41,7 +41,7 @@ $(document).ready(function() {
         if local_js is not None:
             js = '<script src="%s"></script>\n' % local_js
         else:
-            js = ('<script src="//code.jquery.com/' +
+            js = ('<script src="https//code.jquery.com/' +
                   'jquery-%s.min.js"></script>') % version
         return Markup(js)
 
