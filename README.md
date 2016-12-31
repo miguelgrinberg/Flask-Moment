@@ -90,3 +90,13 @@ A timestamp created in this way is an HTML string that can be returned as part o
     return jsonify({ 'timestamp': moment.create(datetime.utcnow()).format('L') })
 
 The Ajax callback in the browser needs to call `flask_moment_render_all()` each time an element containing a timestamp is added to the DOM. The included application demonstrates how this is done.
+
+Building the Docs
+-----------------
+
+Install sphinx and flask-themes:
+
+    pip install sphinx
+    pip install Flask-Sphinx-Themes
+
+To build the docs run `make html` in the docs directory.
