@@ -1,6 +1,8 @@
 Flask-Moment
 ============
 
+[![Build Status](https://travis-ci.org/miguelgrinberg/Flask-Moment.svg?branch=master)](https://travis-ci.org/miguelgrinberg/Flask-Moment)
+
 This extension enhances Jinja2 templates with formatting of dates and times using [moment.js](http://momentjs.com/).
 
 Quick Start
