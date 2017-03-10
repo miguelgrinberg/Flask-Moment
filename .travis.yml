@@ -1,0 +1,12 @@
+language: python
+env:
+  - TOXENV=flake8
+  - TOXENV=py27
+  - TOXENV=py34
+  - TOXENV=py35
+  - TOXENV=py36
+  - TOXENV=pypy
+install:
+  - pip install tox 
+script:
+  - tox

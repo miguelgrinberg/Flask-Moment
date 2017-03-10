@@ -1,8 +1,8 @@
 import pytest
 from flask import Flask
-from jinja2 import Template
 from flask_moment import Moment
 import datetime
+
 
 @pytest.fixture(scope='module')
 def app():
@@ -10,11 +10,13 @@ def app():
     with _app.app_context():
         yield _app
 
+
 @pytest.fixture(scope='module')
 def moment(app):
     moment = Moment()
     moment.init_app(app)
     yield moment
+
 
 @pytest.fixture(scope='module')
 def current_time():

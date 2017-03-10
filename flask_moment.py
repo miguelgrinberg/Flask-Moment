@@ -33,7 +33,7 @@ function flask_moment_render_all() {
 $(document).ready(function() {
     flask_moment_render_all();
 });
-</script>''' % js)
+</script>''' % js)  # noqa: E501
 
     @staticmethod
     def include_jquery(version='2.1.0', local_js=None):
