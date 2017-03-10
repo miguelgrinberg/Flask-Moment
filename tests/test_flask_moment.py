@@ -2,8 +2,11 @@ import pytest
 from datetime import datetime
 
 from flask import render_template_string
+import flask_moment
 from flask_moment import _moment, Moment
 from jinja2 import Markup
+
+from mock import patch
 
 
 # Mock Objects
@@ -17,7 +20,7 @@ class NewDate(datetime):
 _datetime_mock = NewDate
 
 class NewPrivateMoment(_moment):
-    """Mock the moment class for predictable now timestamps"""
+    """Mock the _moment class for predictable now timestamps"""
     def __init__(self, timestamp=None, local=False):
         if timestamp is None:
             timestamp = _datetime_mock.utcnow()
@@ -27,7 +30,7 @@ class NewPrivateMoment(_moment):
 _moment_mock = NewPrivateMoment
 
 class NewPublicMoment(Moment):
-    """Mock the moment class for predictable now timestamps"""
+    """Mock the Moment class for predictable now timestamps"""
     def init_app(self, app):
         if not hasattr(app, 'extensions'):
             app.extensions = {}
@@ -77,9 +80,20 @@ class TestFlaskMomentIncludes(object):
         assert "<script" in ts
         assert "2.10.3/moment-with-locales.min.js" in str(ts)
 
+    def test_include_jquery_default(self):
+        include_jquery = _moment.include_jquery()
+
+        assert isinstance(include_jquery, Markup)
+        assert all([each in str(include_jquery) for each in ['code.jquery.com', '2.1.0']])
+
+    def test_include_jquery_local(self):
+        include_jquery = _moment.include_jquery(local_js=True)
+
+        assert all([each in str(include_jquery) for each in ['<script', '</script>']])
 
 
 class TestPrivateMomentClass(object):
+    '''Private refers to the _moment class'''
 
     def test__moment_default(self):
         mom = _moment_mock()
@@ -90,6 +104,20 @@ class TestPrivateMomentClass(object):
         mom = _moment_mock(local=True)
         assert mom.timestamp == _datetime_mock.utcnow()
         assert mom.local == True
+
+    def test_locale(self):
+        mom = _moment_mock()
+        l = 'en'
+        locale = mom.locale(l)
+        assert isinstance(locale, Markup)
+        assert 'moment.locale("%s")' % l in str(locale)
+
+    def test_lang(self):
+        mom = _moment_mock()
+        l = 'en'
+        lang = mom.lang(l)
+        assert isinstance(lang, Markup)
+        assert 'moment.locale("%s")' % l in str(lang)  
 
     def test__moment_timestamp_passed(self):
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
@@ -187,7 +215,7 @@ class TestPrivateMomentClass(object):
 
 
 class TestPublicMomentClass(object):
-
+    '''Public refers to the Moment class'''
     def test_create_default_no_timestamp(self, app):
         moment = _Moment()
         moment.init_app(app)
