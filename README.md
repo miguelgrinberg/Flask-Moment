@@ -90,3 +90,18 @@ A timestamp created in this way is an HTML string that can be returned as part o
     return jsonify({ 'timestamp': moment.create(datetime.utcnow()).format('L') })
 
 The Ajax callback in the browser needs to call `flask_moment_render_all()` each time an element containing a timestamp is added to the DOM. The included application demonstrates how this is done.
+
+Development
+-----------
+
+Currently the tests are written using pytest. 
+
+    pip install pytest
+
+To run the tests from the root directory use: `py.test`.
+
+Reports on coverage with missing line numbers can be generated using pytest-cov:
+
+    pip install pytest-cov
+
+And then running: `py-test --cov-report term-missing --cov=flask_moment`
