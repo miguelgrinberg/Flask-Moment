@@ -60,7 +60,7 @@ class TestFlaskMomentIncludes(object):
 
         assert isinstance(include_moment, Markup)
         assert "<script" in str(include_moment)
-        assert "2.10.3/moment-with-locales.min.js" in str(include_moment)
+        assert "2.18.1/moment-with-locales.min.js" in str(include_moment)
 
     def test_include_moment_with_different_version_directly(self):
         include_moment = _moment.include_moment(version="2.17.1")
@@ -81,7 +81,7 @@ class TestFlaskMomentIncludes(object):
         ts = str(render_template_string("{{ moment.include_moment() }}"))
 
         assert "<script" in ts
-        assert "2.10.3/moment-with-locales.min.js" in str(ts)
+        assert "2.18.1/moment-with-locales.min.js" in str(ts)
 
     def test_include_jquery_default(self):
         include_jquery = _moment.include_jquery()
