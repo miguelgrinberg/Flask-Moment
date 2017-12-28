@@ -112,17 +112,15 @@ class TestPrivateMomentClass(object):
 
     def test_locale(self):
         mom = _moment_mock()
-        l = 'en'
-        locale = mom.locale(l)
+        locale = mom.locale('en')
         assert isinstance(locale, Markup)
-        assert 'moment.locale("%s")' % l in str(locale)
+        assert 'moment.locale("en")' in str(locale)
 
     def test_lang(self):
         mom = _moment_mock()
-        l = 'en'
-        lang = mom.lang(l)
+        lang = mom.lang('en')
         assert isinstance(lang, Markup)
-        assert 'moment.locale("%s")' % l in str(lang)
+        assert 'moment.locale("en")' in str(lang)
 
     def test__moment_timestamp_passed(self):
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)

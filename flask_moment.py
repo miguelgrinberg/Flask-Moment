@@ -48,11 +48,14 @@ $(document).ready(function() {
     @staticmethod
     def locale(language='en', auto_detect=False):
         if auto_detect:
-            return Markup('<script>\nvar locale = window.navigator.userLanguage || window.navigator.language;\n'
+            return Markup('<script>\nvar locale = '
+                          'window.navigator.userLanguage || '
+                          'window.navigator.language;\n'
                           'moment.locale(locale);\n</script>')
         else:
-            return Markup('<script>\nmoment.locale("%s");\n</script>' % language)
-        
+            return Markup(
+                '<script>\nmoment.locale("%s");\n</script>' % language)
+
     @staticmethod
     def lang(language):
         return _moment.locale(language)
