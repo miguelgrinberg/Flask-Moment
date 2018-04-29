@@ -9,7 +9,10 @@ class _moment(object):
     def include_moment(version='2.18.1', local_js=None):
         js = ''
         if local_js is not None:
-            js = '<script src="%s"></script>\n' % local_js
+            if local_js == '':
+                js = ''
+            else:
+                js = '<script src="%s"></script>\n' % local_js
         elif version is not None:
             js_filename = 'moment-with-locales.min.js' \
                 if StrictVersion(version) >= StrictVersion('2.8.0') \
