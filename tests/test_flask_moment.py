@@ -81,7 +81,7 @@ class TestFlaskMomentIncludes(object):
         include_moment = _moment.include_moment(local_js="")
 
         assert isinstance(include_moment, Markup)
-        assert "<script" not in str(include_moment)
+        assert "<script src=" not in str(include_moment)
 
     def test_include_moment_renders_properly(self, app, moment):
         ts = str(render_template_string("{{ moment.include_moment() }}"))
