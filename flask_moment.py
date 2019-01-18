@@ -6,7 +6,7 @@ from flask import current_app
 
 class _moment(object):
     @staticmethod
-    def include_moment(version='2.18.1', local_js=None):
+    def include_moment(version='2.18.1', local_js=None, lang='en'):
         js = ''
         if local_js is not None:
             js = '<script src="%s"></script>\n' % local_js
@@ -17,7 +17,7 @@ class _moment(object):
             js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
                  'moment.js/%s/%s"></script>\n' % (version, js_filename)
         return Markup('''%s<script>
-moment.locale("en");
+moment.locale("%s");
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
     $(elem).removeClass('flask-moment').show();
@@ -33,7 +33,7 @@ function flask_moment_render_all() {
 $(document).ready(function() {
     flask_moment_render_all();
 });
-</script>''' % js)  # noqa: E501
+</script>''' % (js, lang))  # noqa: E501
 
     @staticmethod
     def include_jquery(version='2.1.0', local_js=None):
