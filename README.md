@@ -34,7 +34,7 @@ This extension also supports the [Flask application factory pattern](http://flas
 
 Note that jQuery is required. If you are already including it on your own then you can remove the `include_jquery()` line. Secure HTTP is used if the request under which these are executed is secure.
 
-The `include_jquery()` and `include_moment()` methods take two optional arguments. If you pass `version`, then the requested version will be loaded from the CDN. If you pass `local_js`, then the given local path will be used to load the library.
+The `include_jquery()` and `include_moment()` methods take some optional arguments. If you pass a `version` argument to any of these two calls, then the requested version will be loaded from the default CDN. If you pass `local_js`, then the given local path will be used to load the library. The `include_moment()` argument takes a third argument `no_js` that when set to `True` will assume that the Moment JavaScript library is already loaded and will only add the JavaScript code that supports this extension.
 
 Step 3: Render timestamps in your template. For example:
 

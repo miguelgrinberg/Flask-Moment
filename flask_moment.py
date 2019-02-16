@@ -6,16 +6,17 @@ from flask import current_app
 
 class _moment(object):
     @staticmethod
-    def include_moment(version='2.18.1', local_js=None):
+    def include_moment(version='2.18.1', local_js=None, no_js=None):
         js = ''
-        if local_js is not None:
-            js = '<script src="%s"></script>\n' % local_js
-        elif version is not None:
-            js_filename = 'moment-with-locales.min.js' \
-                if StrictVersion(version) >= StrictVersion('2.8.0') \
-                else 'moment-with-langs.min.js'
-            js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
-                 'moment.js/%s/%s"></script>\n' % (version, js_filename)
+        if not no_js:
+            if local_js is not None:
+                js = '<script src="%s"></script>\n' % local_js
+            elif version is not None:
+                js_filename = 'moment-with-locales.min.js' \
+                    if StrictVersion(version) >= StrictVersion('2.8.0') \
+                    else 'moment-with-langs.min.js'
+                js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
+                     'moment.js/%s/%s"></script>\n' % (version, js_filename)
         return Markup('''%s<script>
 moment.locale("en");
 function flask_moment_render(elem) {
