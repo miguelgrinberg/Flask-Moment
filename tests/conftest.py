@@ -1,6 +1,4 @@
 import pytest
-import os, sys
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from flask import Flask
 from flask_moment import Moment
 import datetime

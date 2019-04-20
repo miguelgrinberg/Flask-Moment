@@ -2,7 +2,6 @@ from distutils.version import StrictVersion
 from datetime import datetime
 from jinja2 import Markup
 from flask import current_app
-from functools import lru_cache
 import hashlib
 import base64
 import urllib.request
@@ -21,13 +20,16 @@ class _moment(object):
                     if StrictVersion(version) >= StrictVersion('2.8.0') \
                     else 'moment-with-langs.min.js'
                 if sri:
-                    path = 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/%s/%s' % (version, js_filename)
+                    path = ('https://cdnjs.cloudflare.com/ajax/' +
+                            'libs/moment.js/%s/%s') % (version, js_filename)
                     h_64 = _moment._sri_hash(_moment._get_data(
                         '%s' % path))
-                    js = '<script src="%s" integrity="%s" crossorigin="anonymous"></script>\n' % (path, h_64)
+                    js = ('<script src="%s" integrity="%s" ' +
+                          'crossorigin="anonymous"></script>\n') % (path, h_64)
                 else:
-                    js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
-                         'moment.js/%s/%s"></script>\n' % (version, js_filename)
+                    js = ('<script src="//cdnjs.cloudflare.com/ajax/libs/' +
+                          'moment.js/%s/%s"></script>\n') \
+                         % (version, js_filename)
         return Markup('''%s<script>
 moment.locale("en");
 function flask_moment_render(elem) {
@@ -56,7 +58,8 @@ $(document).ready(function() {
             if sri:
                 path = 'https://code.jquery.com/jquery-%s.min.js' % version
                 h_64 = _moment._sri_hash(_moment._get_data(path))
-                js = '<script src="%s" integrity="%s" crossorigin="anonymous"></script>' % (path, h_64)
+                js = ('<script src="%s" integrity="%s" ' +
+                      'crossorigin="anonymous"></script>') % (path, h_64)
             else:
                 js = ('<script src="//code.jquery.com/' +
                       'jquery-%s.min.js"></script>') % version
@@ -78,14 +81,12 @@ $(document).ready(function() {
         return _moment.locale(language)
 
     @staticmethod
-    @lru_cache()
     def _sri_hash(data):
         h = hashlib.sha384(data).digest()
         h_64 = base64.b64encode(h).decode()
         return 'sha384-{}'.format(h_64)
 
     @staticmethod
-    @lru_cache()
     def _get_data(url):
         response = urllib.request.urlopen(url)
         data = response.read()
