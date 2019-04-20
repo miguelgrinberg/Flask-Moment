@@ -4,7 +4,10 @@ from jinja2 import Markup
 from flask import current_app
 import hashlib
 import base64
-import urllib.request
+try:
+    import urllib.request as request
+except ImportError:
+    import urllib as request
 
 
 class _moment(object):
@@ -88,7 +91,7 @@ $(document).ready(function() {
 
     @staticmethod
     def _get_data(url):
-        response = urllib.request.urlopen(url)
+        response = request.urlopen(url)
         data = response.read()
         return data
 
