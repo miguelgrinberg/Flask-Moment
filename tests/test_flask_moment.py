@@ -9,6 +9,7 @@ from jinja2 import Markup
 
 class NewDate(datetime):
     """http://stackoverflow.com/questions/4481954"""
+
     @classmethod
     def utcnow(cls):
         return cls(2017, 1, 15, 22, 1, 21, 101361)
@@ -19,6 +20,7 @@ _datetime_mock = NewDate
 
 class NewPrivateMoment(_moment):
     """Mock the _moment class for predictable now timestamps"""
+
     def __init__(self, timestamp=None, local=False):
         if timestamp is None:
             timestamp = _datetime_mock.utcnow()
@@ -31,6 +33,7 @@ _moment_mock = NewPrivateMoment
 
 class NewPublicMoment(Moment):
     """Mock the Moment class for predictable now timestamps"""
+
     def init_app(self, app):
         if not hasattr(app, 'extensions'):
             app.extensions = {}
@@ -50,7 +53,7 @@ class TestFlaskAppSetup(object):
 
     def test_app_context_processor(self, app, moment):
         assert app.template_context_processors[None][1].__globals__[
-            '__name__'] == 'flask_moment'
+                   '__name__'] == 'flask_moment'
 
 
 class TestFlaskMomentIncludes(object):
@@ -146,7 +149,7 @@ class TestPrivateMomentClass(object):
         assert isinstance(rts, Markup)
         assert rts.find("thisisnotinthemarkup") < 0
         assert rts.find("\"format\"") > 0
-        assert rts.find("data-refresh=\""+str(int(refresh)*60000)+"\"") > 0
+        assert rts.find("data-refresh=\"" + str(int(refresh) * 60000) + "\"") > 0
 
     def test__render_refresh(self):
         mom = _moment_mock()
@@ -156,7 +159,7 @@ class TestPrivateMomentClass(object):
         assert isinstance(rts, Markup)
         assert not rts.find("thisisnotinthemarkup") > 0
         assert rts.find("\"format\"") > 0
-        assert rts.find("data-refresh=\""+str(int(refresh)*60000)+"\"") > 0
+        assert rts.find("data-refresh=\"" + str(int(refresh) * 60000) + "\"") > 0
 
     def test_format_default(self):
         mom = _moment_mock()
@@ -221,6 +224,7 @@ class TestPrivateMomentClass(object):
 
 class TestPublicMomentClass(object):
     '''Public refers to the Moment class'''
+
     def test_create_default_no_timestamp(self, app):
         moment = _Moment()
         moment.init_app(app)
@@ -234,3 +238,25 @@ class TestPublicMomentClass(object):
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
 
         assert moment.create(timestamp=ts).timestamp == ts
+
+
+class TestSriHashGenerator(object):
+
+    def test_something(self):
+        '''test with jquery v.2.1.0 and compare generated hash with https://www.srihash.org'''
+        url = 'https://code.jquery.com/jquery-2.1.0.min.js'
+        reference = 'sha384-85/BFduEdDxQ86xztyNu4BBkVZmlvu+iB7zhBu0VoYdq+ODs3PKpU6iVE3ZqPMut'
+        h = _moment._sri_hash(_moment._get_data(url))
+        assert h == reference
+
+    def test_sri_for_jquery(self):
+        js = _moment.include_jquery(sri=True)
+
+        assert 'integrity="sha384' in js
+        assert 'crossorigin="anonymous"' in js
+
+    def test_sri_for_momentjs(self):
+        js = _moment.include_moment(sri=True)
+
+        assert 'integrity="sha384' in js
+        assert 'crossorigin="anonymous"' in js
