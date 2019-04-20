@@ -21,9 +21,9 @@ class _moment(object):
                     if StrictVersion(version) >= StrictVersion('2.8.0') \
                     else 'moment-with-langs.min.js'
                 if sri:
-                    path = '//cdnjs.cloudflare.com/ajax/libs/moment.js/%s/%s' % (version, js_filename)
+                    path = 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/%s/%s' % (version, js_filename)
                     h_64 = _moment._sri_hash(_moment._get_data(
-                        'https:%s' % path))
+                        '%s' % path))
                     js = '<script src="%s" integrity="%s" crossorigin="anonymous"></script>\n' % (path, h_64)
                 else:
                     js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
@@ -54,9 +54,9 @@ $(document).ready(function() {
             js = '<script src="%s"></script>\n' % local_js
         else:
             if sri:
-                h_64 = _moment._sri_hash(_moment._get_data('https://code.jquery.com/jquery-%s.min.js' % version))
-                js = ('<script src="//code.jquery.com/' +
-                      'jquery-%s.min.js" integrity="%s" crossorigin="anonymous"></script>') % (version, h_64)
+                path = 'https://code.jquery.com/jquery-%s.min.js' % version
+                h_64 = _moment._sri_hash(_moment._get_data(path))
+                js = '<script src="%s" integrity="%s" crossorigin="anonymous"></script>' % (path, h_64)
             else:
                 js = ('<script src="//code.jquery.com/' +
                       'jquery-%s.min.js"></script>') % version
