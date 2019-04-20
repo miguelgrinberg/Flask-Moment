@@ -4,10 +4,13 @@ from jinja2 import Markup
 from flask import current_app
 import hashlib
 import base64
+
 try:
     import urllib.request as request
 except ImportError:
     import urllib as request
+
+_cache = {}
 
 
 class _moment(object):
@@ -25,8 +28,12 @@ class _moment(object):
                 if sri:
                     path = ('https://cdnjs.cloudflare.com/ajax/' +
                             'libs/moment.js/%s/%s') % (version, js_filename)
-                    h_64 = _moment._sri_hash(_moment._get_data(
-                        '%s' % path))
+
+                    h_64 = _cache.get(js_filename)
+                    if h_64 is None:
+                        h_64 = _moment._sri_hash(_moment._get_data(path))
+                        _cache[js_filename] = h_64
+
                     js = ('<script src="%s" integrity="%s" ' +
                           'crossorigin="anonymous"></script>\n') % (path, h_64)
                 else:
@@ -59,8 +66,14 @@ $(document).ready(function() {
             js = '<script src="%s"></script>\n' % local_js
         else:
             if sri:
-                path = 'https://code.jquery.com/jquery-%s.min.js' % version
-                h_64 = _moment._sri_hash(_moment._get_data(path))
+                js_file = 'jquery-%s.min.js' % version
+                path = 'https://code.jquery.com/%s' % js_file
+
+                h_64 = _cache.get(js_file)
+                if h_64 is None:
+                    h_64 = _moment._sri_hash(_moment._get_data(path))
+                    _cache[js_file] = h_64
+
                 js = ('<script src="%s" integrity="%s" ' +
                       'crossorigin="anonymous"></script>') % (path, h_64)
             else:

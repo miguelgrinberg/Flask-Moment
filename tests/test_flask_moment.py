@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from flask import render_template_string
 from flask_moment import _moment, Moment
 from jinja2 import Markup
@@ -261,3 +260,20 @@ class TestSriHashGenerator(object):
 
         assert 'integrity="sha384' in js
         assert 'crossorigin="anonymous"' in js
+
+    def test_sri_hash_cache(self):
+        from flask_moment import _cache
+
+        _cache.clear()
+
+        assert len(_cache.items()) == 0
+
+        js = _moment.include_moment(sri=True)
+        assert 'integrity="sha384' in js
+        assert len(_cache.items()) == 1
+
+        js = _moment.include_jquery(sri=True)
+        assert len(_cache.items()) == 2
+
+        js = _moment.include_moment(sri=True)
+        assert len(_cache.items()) == 2
