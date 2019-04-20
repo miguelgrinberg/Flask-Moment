@@ -80,7 +80,6 @@ $(document).ready(function() {
     @staticmethod
     @lru_cache()
     def _sri_hash(data):
-        print("Hashing..")
         h = hashlib.sha384(data).digest()
         h_64 = base64.b64encode(h).decode()
         return 'sha384-{}'.format(h_64)
