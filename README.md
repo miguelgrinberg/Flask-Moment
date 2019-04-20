@@ -93,6 +93,12 @@ A timestamp created in this way is an HTML string that can be returned as part o
 
 The Ajax callback in the browser needs to call `flask_moment_render_all()` each time an element containing a timestamp is added to the DOM. The included application demonstrates how this is done.
 
+Subresource Integrity(SRI)
+-----------
+[SRI ](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) is a security feature that enables browsers to verify that resources they fetch are not maliciously manipulated. To do so a cryptographic hash is provided that proves integrity.
+
+To enable SRI support for Flask_Moment it is enough to add `sri=True` when adding the script to your html (e.g. calling `include_moment(sri=True)`).
+
 Development
 -----------
 
