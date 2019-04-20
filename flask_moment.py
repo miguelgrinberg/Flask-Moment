@@ -24,7 +24,7 @@ class _moment(object):
                     path = '//cdnjs.cloudflare.com/ajax/libs/moment.js/%s/%s' % (version, js_filename)
                     h_64 = _moment._sri_hash(_moment._get_data(
                         'https:%s' % path))
-                    js = '<script src="https://%s" integrity="%s" crossorigin="anonymous"></script>\n' % (path, h_64)
+                    js = '<script src="%s" integrity="%s" crossorigin="anonymous"></script>\n' % (path, h_64)
                 else:
                     js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
                          'moment.js/%s/%s"></script>\n' % (version, js_filename)
