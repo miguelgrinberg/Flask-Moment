@@ -149,7 +149,7 @@ class TestPrivateMomentClass(object):
         assert isinstance(rts, Markup)
         assert rts.find("thisisnotinthemarkup") < 0
         assert rts.find("\"format\"") > 0
-        assert rts.find("data-refresh=\"" + str(int(refresh) * 60000) + "\"") > 0
+        assert rts.find("data-refresh=\"" + str(int(refresh)*60000) + "\"") > 0
 
     def test__render_refresh(self):
         mom = _moment_mock()
@@ -159,7 +159,7 @@ class TestPrivateMomentClass(object):
         assert isinstance(rts, Markup)
         assert not rts.find("thisisnotinthemarkup") > 0
         assert rts.find("\"format\"") > 0
-        assert rts.find("data-refresh=\"" + str(int(refresh) * 60000) + "\"") > 0
+        assert rts.find("data-refresh=\"" + str(int(refresh)*60000) + "\"") > 0
 
     def test_format_default(self):
         mom = _moment_mock()
@@ -243,9 +243,10 @@ class TestPublicMomentClass(object):
 class TestSriHashGenerator(object):
 
     def test_something(self):
-        '''test with jquery v.2.1.0 and compare generated hash with https://www.srihash.org'''
+        '''test with jquery v.2.1.0 and compare generated hash'''
         url = 'https://code.jquery.com/jquery-2.1.0.min.js'
-        reference = 'sha384-85/BFduEdDxQ86xztyNu4BBkVZmlvu+iB7zhBu0VoYdq+ODs3PKpU6iVE3ZqPMut'
+        reference = ('sha384-85/BFduEdDxQ86xztyNu4BBkVZmlvu+' +
+                     'iB7zhBu0VoYdq+ODs3PKpU6iVE3ZqPMut')
         h = _moment._sri_hash(_moment._get_data(url))
         assert h == reference
 
