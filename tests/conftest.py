@@ -1,6 +1,4 @@
 import pytest
-import os.path, sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from flask import Flask
 from flask_moment import Moment
 import datetime
