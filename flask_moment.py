@@ -13,7 +13,7 @@ class _moment(object):
                    'O4DniLR7bhY1Q39AMn8ePTV9uByV/06g2xqOS')
         if not no_js:
             if local_js is not None:
-                if sri is None:
+                if not sri:
                     js = '<script src="%s"></script>\n' % local_js
                 else:
                     js = ('<script src="%s" integrity="%s" '
@@ -23,7 +23,7 @@ class _moment(object):
                 js_filename = 'moment-with-locales.min.js' \
                     if StrictVersion(version) >= StrictVersion('2.8.0') \
                     else 'moment-with-langs.min.js'
-                if sri is None:
+                if not sri:
                     js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
                          'moment.js/%s/%s"></script>\n' \
                          % (version, js_filename)
@@ -59,14 +59,14 @@ $(document).ready(function() {
             sri = ('sha384-85/BFduEdDxQ86xztyNu4BBkVZmlv'
                    'u+iB7zhBu0VoYdq+ODs3PKpU6iVE3ZqPMut')
         if local_js is not None:
-            if sri is None:
+            if not sri:
                 js = '<script src="%s"></script>\n' % local_js
             else:
                 js = ('<script src="%s" integrity="%s" '
                       'crossorigin="anonymous"></script>\n' % (local_js, sri))
 
         else:
-            if sri is None:
+            if not sri:
                 js = ('<script src="//code.jquery.com/' +
                       'jquery-%s.min.js"></script>') % version
             else:

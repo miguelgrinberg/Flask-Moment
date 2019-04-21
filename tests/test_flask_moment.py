@@ -5,6 +5,7 @@ from jinja2 import Markup
 import hashlib
 import base64
 import re
+
 # Python 2 and 3 compatibility
 try:
     import urllib.request as request
@@ -286,6 +287,27 @@ class TestSubresourceIntegrity(object):
         assert ('<script src=\"True\" integrity=\"sha384-12345678\"'
                 ' crossorigin=\"anonymous\"></script>\n') == include_jquery
 
+    def test_disabling_sri_jquery_default(self):
+        include_jquery = _moment.include_jquery(sri=False)
+
+        assert 'src=\"' in include_jquery
+        assert 'integrity=\"' not in include_jquery
+        assert 'crossorigin\"' not in include_jquery
+
+    def test_disabling_sri_jquery_custom_js(self):
+        include_jquery = _moment.include_jquery(local_js=True, sri=False)
+
+        assert 'src=\"' in include_jquery
+        assert 'integrity=\"' not in include_jquery
+        assert 'crossorigin\"' not in include_jquery
+
+    def test_disabling_sri_jquery_custom_version(self):
+        include_jquery = _moment.include_jquery(version='2.1.1', sri=False)
+
+        assert 'src=\"' in include_jquery
+        assert 'integrity=\"' not in include_jquery
+        assert 'crossorigin\"' not in include_jquery
+
     def test_moment_with_non_default_versions(self):
         include_moment = None
 
@@ -346,6 +368,27 @@ class TestSubresourceIntegrity(object):
         assert 'src=\"' in include_moment
         assert 'integrity=\"sha384-87654321\"' in include_moment
         assert 'crossorigin=\"anonymous\"' in include_moment
+
+    def test_disabling_moment_default(self):
+        include_moment = _moment.include_moment(sri=False)
+
+        assert 'src=\"' in include_moment
+        assert 'integrity=\"' not in include_moment
+        assert 'crossorigin' not in include_moment
+
+    def test_disabling_moment_custom(self):
+        include_moment = _moment.include_moment(local_js=True, sri=False)
+
+        assert 'src=\"' in include_moment
+        assert 'integrity=\"' not in include_moment
+        assert 'crossorigin' not in include_moment
+
+    def test_disabling_moment_custom_version(self):
+        include_moment = _moment.include_moment(version='2.17.9', sri=False)
+
+        assert 'src=\"' in include_moment
+        assert 'integrity=\"' not in include_moment
+        assert 'crossorigin' not in include_moment
 
     def test_default_hash_values(self):
         def _sri_hash(data):
