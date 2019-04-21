@@ -100,6 +100,8 @@ Subresource Integrity(SRI)
 SRI is enabled by default. If you wish to use another version or want to host your own javascript, a [separate hash ](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity#Tools_for_generating_SRI_hashes) can be provided.
 Just add `sri=<YOUR-HASH>` when calling either `moment.include_moment()` or `moment.include_jquery()`. If no sri hash is provided and you choose to use a non default version of javascript, no sri hash will be added.
 
+You can always choose to disable sri. To do so just set `sri=False`.
+
 
 Development
 -----------
