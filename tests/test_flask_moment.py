@@ -1,16 +1,8 @@
 from datetime import datetime
 from flask import render_template_string
-from flask_moment import _moment, Moment
 from jinja2 import Markup
-import hashlib
-import base64
-import re
-
-# Python 2 and 3 compatibility
-try:
-    import urllib.request as request
-except ImportError:
-    import urllib as request
+from flask_moment import _moment, Moment, default_jquery_version, \
+    default_moment_version, default_moment_sri
 
 
 # Mock Objects
@@ -71,7 +63,8 @@ class TestFlaskMomentIncludes(object):
 
         assert isinstance(include_moment, Markup)
         assert "<script" in str(include_moment)
-        assert "2.18.1/moment-with-locales.min.js" in str(include_moment)
+        assert default_moment_version + "/moment-with-locales.min.js" in str(
+            include_moment)
 
     def test_include_moment_with_different_version_directly(self):
         include_moment = _moment.include_moment(version="2.17.1")
@@ -92,14 +85,15 @@ class TestFlaskMomentIncludes(object):
         ts = str(render_template_string("{{ moment.include_moment() }}"))
 
         assert "<script" in ts
-        assert "2.18.1/moment-with-locales.min.js" in str(ts)
+        assert default_moment_version + "/moment-with-locales.min.js" in str(
+            ts)
 
     def test_include_jquery_default(self):
         include_jquery = _moment.include_jquery()
 
         assert isinstance(include_jquery, Markup)
         assert all([each in str(include_jquery) for each in [
-            'code.jquery.com', '2.1.0']])
+            'code.jquery.com', default_jquery_version]])
 
     def test_include_jquery_local(self):
         include_jquery = _moment.include_jquery(local_js=True)
@@ -262,7 +256,7 @@ class TestSubresourceIntegrity(object):
         include_jquery = _moment.include_jquery()
 
         assert 'src=\"' in include_jquery
-        assert 'integrity=\"sha384' in include_jquery
+        assert 'integrity=\"sha' in include_jquery
         assert 'crossorigin=\"anonymous\"' in include_jquery
 
     def test_jquery_from_cdn_without_custom_sri_hash(self):
@@ -328,31 +322,27 @@ class TestSubresourceIntegrity(object):
     def test_moment_with_default_version(self):
         include_moment = _moment.include_moment()
 
-        assert include_moment.startswith('<script src="//cdnjs.cloudflare.com'
-                                         '/ajax/libs/moment.js/2.18.1/moment-'
-                                         'with-locales.min.js" integrity='
-                                         '"sha384-iMhq1oHAQWG7+cVzHBvYynTbGZ'
-                                         'yO4DniLR7bhY1Q39AMn8ePTV9uByV/06g2xq'
-                                         'OS" crossorigin="anonymous">'
-                                         '</script>')
+        assert include_moment.startswith(
+            '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/{}'
+            '/moment-with-locales.min.js" integrity="{}" '
+            'crossorigin="anonymous"></script>'.format(
+                default_moment_version, default_moment_sri))
 
     def test_moment_from_cdn_with_custom_sri_hash(self):
         include_moment = _moment.include_moment(sri='sha384-12345678')
 
-        assert include_moment.startswith('<script src="//cdnjs.cloudflare.com'
-                                         '/ajax/libs/moment.js/2.18.1/moment-'
-                                         'with-locales.min.js" integrity='
-                                         '"sha384-12345678" crossorigin='
-                                         '"anonymous"></script>')
+        assert include_moment.startswith(
+            '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/{}'
+            '/moment-with-locales.min.js" integrity="sha384-12345678" '
+            'crossorigin="anonymous"></script>'.format(default_moment_version))
 
         include_moment = _moment.include_moment(version='2.0.0',
                                                 sri='sha384-12345678')
 
-        assert include_moment.startswith('<script src="//cdnjs.cloudflare.com'
-                                         '/ajax/libs/moment.js/2.0.0/moment-'
-                                         'with-langs.min.js" integrity="sha384'
-                                         '-12345678" crossorigin="anonymous">'
-                                         '</script>')
+        assert include_moment.startswith(
+            '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0'
+            '/moment-with-langs.min.js" integrity="sha384-12345678" '
+            'crossorigin="anonymous"></script>')
 
     def test_moment_local(self):
         include_moment = _moment.include_moment(local_js=True)
@@ -389,34 +379,3 @@ class TestSubresourceIntegrity(object):
         assert 'src=\"' in include_moment
         assert 'integrity=\"' not in include_moment
         assert 'crossorigin' not in include_moment
-
-    def test_default_hash_values(self):
-        def _sri_hash(data):
-            h = hashlib.sha384(data).digest()
-            h_64 = base64.b64encode(h).decode()
-            return 'sha384-{}'.format(h_64)
-
-        def _get_data(url):
-            response = request.urlopen(url)
-            data = response.read()
-            return data
-
-        pattern = 'integrity=\"(.+?)\"'
-        include_jquery = _moment.include_jquery()
-        include_moment = _moment.include_moment()
-
-        # JQUERY
-        h_64 = _sri_hash(
-            _get_data('https://code.jquery.com/jquery-2.1.0.min.js'))
-
-        m = re.search(pattern, include_jquery)
-
-        assert m.group(1) == h_64
-
-        # MOMENT
-        h_64 = _sri_hash(
-            _get_data('https://cdnjs.cloudflare.com/ajax/libs/moment.js'
-                      '/2.18.1/moment-with-locales.min.js'))
-
-        m = re.search(pattern, include_moment)
-        assert m.group(1) == h_64

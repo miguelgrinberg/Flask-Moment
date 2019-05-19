@@ -3,14 +3,23 @@ from datetime import datetime
 from jinja2 import Markup
 from flask import current_app
 
+# //code.jquery.com/jquery-3.4.1.min.js
+default_jquery_version = '3.4.1'
+default_jquery_sri = 'sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo='
+
+# //cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js
+default_moment_version = '2.24.0'
+default_moment_sri = 'sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo='
+
 
 class _moment(object):
     @staticmethod
-    def include_moment(version='2.18.1', local_js=None, no_js=None, sri=None):
+    def include_moment(version=default_moment_version, local_js=None,
+                       no_js=None, sri=None):
         js = ''
-        if version == '2.18.1' and local_js is None and sri is None:
-            sri = ('sha384-iMhq1oHAQWG7+cVzHBvYynTbGZy'
-                   'O4DniLR7bhY1Q39AMn8ePTV9uByV/06g2xqOS')
+        if version == default_moment_version and local_js is None and \
+                sri is None:
+            sri = default_moment_sri
         if not no_js:
             if local_js is not None:
                 if not sri:
@@ -53,11 +62,12 @@ $(document).ready(function() {
 </script>''' % js)  # noqa: E501
 
     @staticmethod
-    def include_jquery(version='2.1.0', local_js=None, sri=None):
+    def include_jquery(version=default_jquery_version, local_js=None,
+                       sri=None):
         js = ''
-        if sri is None and version == '2.1.0' and local_js is None:
-            sri = ('sha384-85/BFduEdDxQ86xztyNu4BBkVZmlv'
-                   'u+iB7zhBu0VoYdq+ODs3PKpU6iVE3ZqPMut')
+        if sri is None and version == default_jquery_version and \
+                local_js is None:
+            sri = default_jquery_sri
         if local_js is not None:
             if not sri:
                 js = '<script src="%s"></script>\n' % local_js
