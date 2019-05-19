@@ -6,17 +6,33 @@ from flask import current_app
 
 class _moment(object):
     @staticmethod
-    def include_moment(version='2.18.1', local_js=None, no_js=None):
+    def include_moment(version='2.18.1', local_js=None, no_js=None, sri=None):
         js = ''
+        if version == '2.18.1' and local_js is None and sri is None:
+            sri = ('sha384-iMhq1oHAQWG7+cVzHBvYynTbGZy'
+                   'O4DniLR7bhY1Q39AMn8ePTV9uByV/06g2xqOS')
         if not no_js:
             if local_js is not None:
-                js = '<script src="%s"></script>\n' % local_js
+                if not sri:
+                    js = '<script src="%s"></script>\n' % local_js
+                else:
+                    js = ('<script src="%s" integrity="%s" '
+                          'crossorigin="anonymous"></script>\n'
+                          % (local_js, sri))
             elif version is not None:
                 js_filename = 'moment-with-locales.min.js' \
                     if StrictVersion(version) >= StrictVersion('2.8.0') \
                     else 'moment-with-langs.min.js'
-                js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
-                     'moment.js/%s/%s"></script>\n' % (version, js_filename)
+                if not sri:
+                    js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
+                         'moment.js/%s/%s"></script>\n' \
+                         % (version, js_filename)
+                else:
+                    js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
+                         'moment.js/%s/%s" integrity="%s" ' \
+                         'crossorigin="anonymous"></script>\n' \
+                         % (version, js_filename, sri)
+
         return Markup('''%s<script>
 moment.locale("en");
 function flask_moment_render(elem) {
@@ -37,13 +53,26 @@ $(document).ready(function() {
 </script>''' % js)  # noqa: E501
 
     @staticmethod
-    def include_jquery(version='2.1.0', local_js=None):
+    def include_jquery(version='2.1.0', local_js=None, sri=None):
         js = ''
+        if sri is None and version == '2.1.0' and local_js is None:
+            sri = ('sha384-85/BFduEdDxQ86xztyNu4BBkVZmlv'
+                   'u+iB7zhBu0VoYdq+ODs3PKpU6iVE3ZqPMut')
         if local_js is not None:
-            js = '<script src="%s"></script>\n' % local_js
+            if not sri:
+                js = '<script src="%s"></script>\n' % local_js
+            else:
+                js = ('<script src="%s" integrity="%s" '
+                      'crossorigin="anonymous"></script>\n' % (local_js, sri))
+
         else:
-            js = ('<script src="//code.jquery.com/' +
-                  'jquery-%s.min.js"></script>') % version
+            if not sri:
+                js = ('<script src="//code.jquery.com/' +
+                      'jquery-%s.min.js"></script>') % version
+            else:
+                js = ('<script src="//code.jquery.com/jquery-%s.min.js" '
+                      'integrity="%s" crossorigin="anonymous"></script>'
+                      % (version, sri))
         return Markup(js)
 
     @staticmethod
