@@ -121,14 +121,16 @@ document.addEventListener('DOMContentLoaded', flask_moment_render_all)
 
     def _render(self, format, refresh=False, **kwargs):
         t = self._timestamp_as_iso_8601(self.timestamp)
-        opener = (f'<span class="flask-moment" data-timestamp="{t}" '
-                  f'data-format="{format}" '
-                  f'data-refresh="{int(refresh) * 60000}" '
-                  f'style="display: none"')
+        opener = ''.join(
+            ['<span class="flask-moment" data-timestamp="%s" ' % t,
+             'data-format="%s" ' % format,
+             'data-refresh="%d" ' % (int(refresh) * 60000),
+             'style="display: none"'
+             ])
         strlist = [opener]
         for key, val in kwargs.items():
-            strlist.append(f' data-{key}="{val}"')
-        strlist.append(f'>{t}</span>')
+            strlist.append(' data-%s="%s"' % (key, val))
+        strlist.append('>%s</span>' % t)
         return Markup(''.join(strlist))
 
     def format(self, fmt, refresh=False):
