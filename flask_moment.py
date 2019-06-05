@@ -50,12 +50,10 @@ let lambdas = {
     'fromNow': el => moment(el.dataset.timestamp).fromNow(Number(el.dataset.nosuffix))
 }
 function flask_moment_render(el) {
-    if (el.dataset.format in lambdas) {
-        console.log(Boolean(el.dataset.nosuffix));
+    if (el.dataset.format in lambdas)
         el.textContent = lambdas[el.dataset.format](el);
-    } else {
+    else
         el.textContent = moment(el.dataset.timestamp)[el.dataset.format]();
-        }
     el.classList.remove('flask-moment');
     el.style.display = '';
 }
