@@ -44,21 +44,30 @@ class _moment(object):
 
         return Markup('''%s<script>
 moment.locale("en");
-function flask_moment_render(elem) {
-    $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
-    $(elem).removeClass('flask-moment').show();
+let lambdas = {
+    'from': el => moment(el.dataset.timestamp).from(moment(el.dataset.fromtime), Number(el.dataset.nosuffix)),
+    'format': el => moment(el.dataset.timestamp).format(el.dataset.formatstring),
+    'fromNow': el => moment(el.dataset.timestamp).fromNow(Number(el.dataset.nosuffix))
+}
+function flask_moment_render(el) {
+    if (el.dataset.format in lambdas) {
+        console.log(Boolean(el.dataset.nosuffix));
+        el.textContent = lambdas[el.dataset.format](el);
+    } else {
+        el.textContent = moment(el.dataset.timestamp)[el.dataset.format]();
+        }
+    el.classList.remove('flask-moment');
+    el.style.display = '';
 }
 function flask_moment_render_all() {
-    $('.flask-moment').each(function() {
-        flask_moment_render(this);
-        if ($(this).data('refresh')) {
-            (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
-        }
-    })
+    [...document.getElementsByClassName('flask-moment')].forEach(el => {
+        flask_moment_render(el);
+        if (el.dataset.refresh)
+            setInterval(flask_moment_render(el), el.dataset.refresh);
+    });
 }
-$(document).ready(function() {
-    flask_moment_render_all();
-});
+document.addEventListener('DOMContentLoaded', flask_moment_render_all)
+
 </script>''' % js)  # noqa: E501
 
     @staticmethod
@@ -112,32 +121,37 @@ $(document).ready(function() {
             tz = 'Z'
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
-    def _render(self, format, refresh=False):
+    def _render(self, format, refresh=False, **kwargs):
         t = self._timestamp_as_iso_8601(self.timestamp)
-        return Markup(('<span class="flask-moment" data-timestamp="%s" ' +
-                       'data-format="%s" data-refresh="%d" ' +
-                       'style="display: none">%s</span>') %
-                      (t, format, int(refresh) * 60000, t))
+        opener = (f'<span class="flask-moment" data-timestamp="{t}" '
+                  f'data-format="{format}" '
+                  f'data-refresh="{int(refresh) * 60000}" '
+                  f'style="display: none"')
+        strlist = [opener]
+        for key, val in kwargs.items():
+            strlist.append(f' data-{key}="{val}"')
+        strlist.append(f'>{t}</span>')
+        return Markup(''.join(strlist))
 
     def format(self, fmt, refresh=False):
-        return self._render("format('%s')" % fmt, refresh)
+        return self._render("format", refresh, formatstring=fmt)
 
     def fromNow(self, no_suffix=False, refresh=False):
-        return self._render("fromNow(%s)" % int(no_suffix), refresh)
+        return self._render("fromNow", refresh, nosuffix=int(no_suffix))
 
     def fromTime(self, timestamp, no_suffix=False, refresh=False):
-        return self._render("from(moment('%s'),%s)" %
-                            (self._timestamp_as_iso_8601(timestamp),
-                             int(no_suffix)), refresh)
+        return self._render("from", refresh,
+                            fromtime=self._timestamp_as_iso_8601(timestamp),
+                            nosuffix=int(no_suffix))
 
     def calendar(self, refresh=False):
-        return self._render("calendar()", refresh)
+        return self._render("calendar", refresh)
 
     def valueOf(self, refresh=False):
-        return self._render("valueOf()", refresh)
+        return self._render("valueOf", refresh)
 
     def unix(self, refresh=False):
-        return self._render("unix()", refresh)
+        return self._render("unix", refresh)
 
 
 class Moment(object):
