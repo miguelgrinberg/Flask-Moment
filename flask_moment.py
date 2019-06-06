@@ -45,20 +45,19 @@ class _moment(object):
         return Markup('''%s<script>
 moment.locale("en");
 function flask_moment_render(elem) {
-    $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
-    $(elem).removeClass('flask-moment').show();
+    elem.textContent = eval('moment("' + elem.dataset.timestamp + '").' + elem.dataset.format + ';');
+    elem.classList.remove('flask-moment');
+    elem.style.display = '';
 }
 function flask_moment_render_all() {
-    $('.flask-moment').each(function() {
-        flask_moment_render(this);
-        if ($(this).data('refresh')) {
-            (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
-        }
-    })
+    [...document.getElementsByClassName('flask-moment')].forEach(
+        elem => {
+            flask_moment_render(elem);
+            if (elem.dataset.refresh != 0)
+                setInterval(() => flask_moment_render(elem), elem.dataset.refresh);
+        });
 }
-$(document).ready(function() {
-    flask_moment_render_all();
-});
+document.addEventListener('DOMContentLoaded', flask_moment_render_all);
 </script>''' % js)  # noqa: E501
 
     @staticmethod
