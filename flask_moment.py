@@ -120,7 +120,8 @@ $(document).ready(function() {
                       (t, format, int(refresh) * 60000, t))
 
     def default(self, refresh=False):
-        return self.format(current_app.config['MOMENT_DEFAULT_FORMAT'], refresh)
+        fmt = current_app.config['MOMENT_DEFAULT_FORMAT']
+        return self.format(fmt, refresh)
 
     def format(self, fmt, refresh=False):
         return self._render("format('%s')" % fmt, refresh)
