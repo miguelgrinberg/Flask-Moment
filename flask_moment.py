@@ -112,12 +112,15 @@ $(document).ready(function() {
             tz = 'Z'
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
-    def _render(self, format, refresh=False):
+    def _render(self, format, refresh=False):                                          
         t = self._timestamp_as_iso_8601(self.timestamp)
         return Markup(('<span class="flask-moment" data-timestamp="%s" ' +
                        'data-format="%s" data-refresh="%d" ' +
                        'style="display: none">%s</span>') %
                       (t, format, int(refresh) * 60000, t))
+    
+    def default(self):
+        return self.format(current_app.config['MOMENT_DEFAULT_FORMAT'])
 
     def format(self, fmt, refresh=False):
         return self._render("format('%s')" % fmt, refresh)
