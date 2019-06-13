@@ -64,6 +64,11 @@ The supported list of display functions is shown below:
 
 Consult the [moment.js documentation](http://momentjs.com/) for details on these functions.
 
+Default Format
+--------------
+
+If you most or all of your timestamps use the same format you can use the Flask config API to pass the option __MOMENT_DEFAULT_FORMAT__ = 'format_string'. To use the default format use with {{ moment(timestamp).default() }}. Consult the [moment.js format documentation](http://momentjs.com/docs/#/displaying/format/) for a list of acepted tokens.
+
 Auto-Refresh
 ------------
 
