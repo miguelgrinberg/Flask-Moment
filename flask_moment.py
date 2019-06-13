@@ -118,7 +118,7 @@ $(document).ready(function() {
                        'data-format="%s" data-refresh="%d" ' +
                        'style="display: none">%s</span>') %
                       (t, format, int(refresh) * 60000, t))
-    
+
     def default(self):
         return self.format(current_app.config['MOMENT_DEFAULT_FORMAT'])
 
