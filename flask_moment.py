@@ -119,6 +119,10 @@ $(document).ready(function() {
                        'style="display: none">%s</span>') %
                       (t, format, int(refresh) * 60000, t))
 
+    def default(self, refresh=False):
+        fmt = current_app.config['MOMENT_DEFAULT_FORMAT']
+        return self.format(fmt, refresh)
+
     def format(self, fmt, refresh=False):
         return self._render("format('%s')" % fmt, refresh)
 
