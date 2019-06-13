@@ -85,8 +85,15 @@ class TestFlaskMomentIncludes(object):
         ts = str(render_template_string("{{ moment.include_moment() }}"))
 
         assert "<script" in ts
-        assert default_moment_version + "/moment-with-locales.min.js" in str(
-            ts)
+        assert default_moment_version + "/moment-with-locales.min.js" in ts
+        assert 'moment.defaultFormat' not in ts
+
+    def test_include_moment_with_default(self, app, moment):
+        app.config['MOMENT_DEFAULT_FORMAT'] = 'foo'
+        ts = str(render_template_string("{{ moment.include_moment() }}"))
+        assert "<script" in ts
+        assert default_moment_version + "/moment-with-locales.min.js" in ts
+        assert 'moment.defaultFormat = "foo";' in ts
 
     def test_include_jquery_default(self):
         include_jquery = _moment.include_jquery()

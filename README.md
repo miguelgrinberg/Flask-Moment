@@ -55,9 +55,9 @@ Function Reference
 
 The supported list of display functions is shown below:
 
-- `moment(timestamp=None, local=False).format(format_string)`
-- `moment(timestamp=None, local=False).fromNow(no_suffix = False)`
-- `moment(timestamp=None, local=False).fromTime(another_timesatmp, no_suffix = False)`
+- `moment(timestamp=None, local=False).format(format_string=None)`
+- `moment(timestamp=None, local=False).fromNow(no_suffix=False)`
+- `moment(timestamp=None, local=False).fromTime(another_timesatmp, no_suffix=False)`
 - `moment(timestamp=None, local=False).calendar()`
 - `moment(timestamp=None, local=False).valueOf()`
 - `moment(timestamp=None, local=False).unix()`
@@ -68,6 +68,11 @@ Auto-Refresh
 ------------
 
 All the display functions take an optional `refresh` argument that when set to `True` will re-render timestamps every minute. This can be useful for relative time formats such as the one returned by the `fromNow()` or `fromTime()` functions. By default refreshing is disabled.
+
+Default Format
+--------------
+
+The `format()` function can be invoked without arguments, in which case a default format of ISO8601 defined by the moment.js library is used. If you want to set a different default, you can set the `MOMENT_DEFAULT_FORMAT` variable in the Flask configuration. Consult the [moment.js format documentation](http://momentjs.com/docs/#/displaying/format/) for a list of acepted tokens.
 
 Internationalization
 --------------------

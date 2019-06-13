@@ -42,8 +42,12 @@ class _moment(object):
                          'crossorigin="anonymous"></script>\n' \
                          % (version, js_filename, sri)
 
+        default_format = ''
+        if 'MOMENT_DEFAULT_FORMAT' in current_app.config:
+            default_format = '\nmoment.defaultFormat = "%s";' % \
+                current_app.config['MOMENT_DEFAULT_FORMAT']
         return Markup('''%s<script>
-moment.locale("en");
+moment.locale("en");%s
 function flask_moment_render(elem) {
     $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
     $(elem).removeClass('flask-moment').show();
@@ -59,7 +63,7 @@ function flask_moment_render_all() {
 $(document).ready(function() {
     flask_moment_render_all();
 });
-</script>''' % js)  # noqa: E501
+</script>''' % (js, default_format))  # noqa: E501
 
     @staticmethod
     def include_jquery(version=default_jquery_version, local_js=None,
@@ -119,8 +123,8 @@ $(document).ready(function() {
                        'style="display: none">%s</span>') %
                       (t, format, int(refresh) * 60000, t))
 
-    def format(self, fmt, refresh=False):
-        return self._render("format('%s')" % fmt, refresh)
+    def format(self, fmt=None, refresh=False):
+        return self._render("format('%s')" % (fmt or ''), refresh)
 
     def fromNow(self, no_suffix=False, refresh=False):
         return self._render("fromNow(%s)" % int(no_suffix), refresh)
