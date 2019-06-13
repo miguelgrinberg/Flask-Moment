@@ -112,7 +112,7 @@ $(document).ready(function() {
             tz = 'Z'
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
-    def _render(self, format, refresh=False):                                          
+    def _render(self, format, refresh=False):
         t = self._timestamp_as_iso_8601(self.timestamp)
         return Markup(('<span class="flask-moment" data-timestamp="%s" ' +
                        'data-format="%s" data-refresh="%d" ' +
