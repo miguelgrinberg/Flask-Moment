@@ -98,7 +98,8 @@ $(document).ready(function() {
                           'moment.locale(locale);\n</script>')
         if customization:
             return Markup(
-                '<script>\nmoment.locale("%s", %s);\n</script>' % (language, customization))
+                '<script>\nmoment.locale("%s", %s);\n</script>' % (
+                    language, customization))
         return Markup(
             '<script>\nmoment.locale("%s");\n</script>' % language)
 
