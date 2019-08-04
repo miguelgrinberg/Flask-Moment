@@ -79,9 +79,19 @@ Internationalization
 
 By default dates and times are rendered in English. To change to a different language add the following line in the `<head>` section after the `include_moment()` line:
 
-    {{ moment.lang("es") }}
+    {{ moment.locale("es") }}
     
 The above example sets the language to Spanish. Moment.js supports a large number of languages, consult the documentation for the list of languages and their two letter codes.
+
+The extension also supports auto-detection of the client's browser language:
+
+    {{ moment.locale(auto_detect=True) }}
+
+Custom locales can also be included as a dictionary:
+
+    {{ moment.locale(customizations={ ... }) }}
+
+See the [Moment.js locale customizations](https://momentjs.com/docs/#/i18n/changing-locale/) documentation for details on how to define a custom locale.
 
 Ajax Support
 ------------
