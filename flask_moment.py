@@ -90,15 +90,18 @@ $(document).ready(function() {
         return Markup(js)
 
     @staticmethod
-    def locale(language='en', auto_detect=False):
+    def locale(language='en', auto_detect=False, customization=None):
         if auto_detect:
             return Markup('<script>\nvar locale = '
                           'window.navigator.userLanguage || '
                           'window.navigator.language;\n'
                           'moment.locale(locale);\n</script>')
-        else:
+        if customization:
             return Markup(
-                '<script>\nmoment.locale("%s");\n</script>' % language)
+                '<script>\nmoment.locale("%s", %s);\n</script>' % (
+                    language, customization))
+        return Markup(
+            '<script>\nmoment.locale("%s");\n</script>' % language)
 
     @staticmethod
     def lang(language):
