@@ -1,6 +1,7 @@
-Flask==0.10.1
+Click==7.0
+Flask==1.1.1
 Flask-Moment
-Jinja2==2.7.1
-MarkupSafe==0.18
-Werkzeug==0.9.4
-itsdangerous==0.23
+itsdangerous==1.1.0
+Jinja2==2.10.1
+MarkupSafe==1.1.1
+Werkzeug==0.15.5
