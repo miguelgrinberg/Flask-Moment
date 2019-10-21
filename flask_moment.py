@@ -130,6 +130,15 @@ $(document).ready(function() {
                             (self._timestamp_as_iso_8601(timestamp),
                              int(no_suffix)), refresh)
 
+    def subtract(self, param, date_format):
+        return self._render("subtract(%s).format('%s')" % (param, date_format))
+
+    def add(self, param, date_format):
+        return self._render("add(%s).format('%s')" % (param, date_format))
+
+    def diff(self, timestamp, param):
+        return self._render("diff(%s, '%s')" % (timestamp, param))
+
     def calendar(self, refresh=False):
         return self._render("calendar()", refresh)
 
