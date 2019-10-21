@@ -137,7 +137,7 @@ $(document).ready(function() {
         return self._render("add(%s).format('%s')" % (param, date_format))
 
     def diff(self, timestamp, param):
-        return self._render("diff(%s, '%s')" % (timestamp, param))
+        return self._render("diff('%s', '%s')" % (timestamp, param))
 
     def calendar(self, refresh=False):
         return self._render("calendar()", refresh)
