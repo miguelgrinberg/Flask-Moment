@@ -58,6 +58,8 @@ The supported list of display functions is shown below:
 - `moment(timestamp=None, local=False).format(format_string=None)`
 - `moment(timestamp=None, local=False).fromNow(no_suffix=False)`
 - `moment(timestamp=None, local=False).fromTime(another_timesatmp, no_suffix=False)`
+- `moment(timestamp=None, local=False).toNow(no_suffix=False)`
+- `moment(timestamp=None, local=False).toTime(another_timesatmp, no_suffix=False)`
 - `moment(timestamp=None, local=False).calendar()`
 - `moment(timestamp=None, local=False).valueOf()`
 - `moment(timestamp=None, local=False).unix()`
