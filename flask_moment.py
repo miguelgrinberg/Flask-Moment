@@ -137,6 +137,14 @@ $(document).ready(function() {
                             (self._timestamp_as_iso_8601(timestamp),
                              int(no_suffix)), refresh)
 
+    def toNow(self, no_suffix=False, refresh=False):
+        return self._render("toNow(%s)" % int(no_suffix), refresh)
+
+    def toTime(self, timestamp, no_suffix=False, refresh=False):
+        return self._render("to(moment('%s'),%s)" %
+                            (self._timestamp_as_iso_8601(timestamp),
+                             int(no_suffix)), refresh)
+
     def calendar(self, refresh=False):
         return self._render("calendar()", refresh)
 

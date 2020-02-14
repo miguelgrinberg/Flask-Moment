@@ -214,6 +214,42 @@ class TestPrivateMomentClass(object):
         assert rts.find("%s" % mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
+    def test_toNow_default(self):
+        mom = _moment_mock()
+        no_suffix = False
+        rts = mom.toNow()
+
+        assert rts.find("toNow(%s)" % int(no_suffix)) > 0
+
+    def test_toNow_no_suffix(self):
+        mom = _moment_mock()
+        no_suffix = True
+        rts = mom.toNow(no_suffix=no_suffix)
+
+        assert rts.find("toNow(%s)" % int(no_suffix)) > 0
+
+    def test_toTime_default(self):
+        mom = _moment_mock()
+        ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
+        no_suffix = False
+        rts = mom.toTime(timestamp=ts)
+
+        assert rts.find("to(moment('%s'),%s)"
+                        % (mom._timestamp_as_iso_8601(ts), int(no_suffix))) > 0
+        assert rts.find("%s" % mom._timestamp_as_iso_8601(
+            timestamp=mom.timestamp)) > 0
+
+    def test_toTime_no_suffix(self):
+        mom = _moment_mock()
+        ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
+        no_suffix = True
+        rts = mom.toTime(timestamp=ts, no_suffix=no_suffix)
+
+        assert rts.find("to(moment('%s'),%s)"
+                        % (mom._timestamp_as_iso_8601(ts), int(no_suffix))) > 0
+        assert rts.find("%s" % mom._timestamp_as_iso_8601(
+            timestamp=mom.timestamp)) > 0
+
     def test_calendar_default(self):
         mom = _moment_mock()
         rts = mom.calendar()
