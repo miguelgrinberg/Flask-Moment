@@ -74,7 +74,7 @@ All the display functions take an optional `refresh` argument that when set to `
 Default Format
 --------------
 
-The `format()` function can be invoked without arguments, in which case a default format of ISO8601 defined by the moment.js library is used. If you want to set a different default, you can set the `MOMENT_DEFAULT_FORMAT` variable in the Flask configuration. Consult the [moment.js format documentation](http://momentjs.com/docs/#/displaying/format/) for a list of acepted tokens.
+The `format()` function can be invoked without arguments, in which case a default format of ISO8601 defined by the moment.js library is used. If you want to set a different default, you can set the `MOMENT_DEFAULT_FORMAT` variable in the Flask configuration. Consult the [moment.js format documentation](http://momentjs.com/docs/#/displaying/format/) for a list of accepted tokens.
 
 Internationalization
 --------------------
