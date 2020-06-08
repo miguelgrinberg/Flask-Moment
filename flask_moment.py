@@ -49,7 +49,41 @@ class _moment(object):
         return Markup('''%s<script>
 moment.locale("en");%s
 function flask_moment_render(elem) {
-    $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+    timestamp = moment($(elem).data('timestamp'));
+    func = $(elem).data('function');
+    argument = $(elem).data('argument');
+    formatted_output = "";
+    switch (func) {
+        case 'calendar':
+            formatted_output = timestamp.calendar();
+            break;
+        case 'valueOf':
+            formatted_output = timestamp.valueOf();
+            break;
+        case 'unix':
+            formatted_output = timestamp.unix();
+            break;
+        case 'format':
+            formatted_output = timestamp.format(argument);
+            break;
+        case 'fromNow':
+            formatted_output = timestamp.fromNow(argument);
+            break;
+        case 'toNow':
+            formatted_output = timestamp.toNow(argument);
+            break;
+        case 'from':
+            timestamp2 = moment($(elem).data('timestamp2'));
+            formatted_output = timestamp.from(timestamp2, argument);
+            break;
+        case 'to':
+            timestamp2 = moment($(elem).data('timestamp2'));
+            formatted_output = timestamp.to(timestamp2, argument);
+            break;
+        default:
+            console.error(`Can't call flask_moment_render with function ${func}.`);
+    }
+    $(elem).text(formatted_output);
     $(elem).removeClass('flask-moment').show();
 }
 function flask_moment_render_all() {
@@ -119,40 +153,43 @@ $(document).ready(function() {
             tz = 'Z'
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
-    def _render(self, format, refresh=False):
+    def _render(self, func, arg1=None, arg2=None, refresh=False):
         t = self._timestamp_as_iso_8601(self.timestamp)
+        data_values = 'data-function="%s"' % func
+        if func in ("format", "fromNow", "toNow", "from", "to"):
+            data_values += ' data-argument="%s"' % arg1
+        if func in ("from", "to"):
+            data_values += ' data-timestamp2="%s"' % arg2
         return Markup(('<span class="flask-moment" data-timestamp="%s" ' +
-                       'data-format="%s" data-refresh="%d" ' +
+                       '%s data-refresh="%d" ' +
                        'style="display: none">%s</span>') %
-                      (t, format, int(refresh) * 60000, t))
+                      (t, data_values, int(refresh) * 60000, t))
 
     def format(self, fmt=None, refresh=False):
-        return self._render("format('%s')" % (fmt or ''), refresh)
+        return self._render("format", arg1=(fmt or ''), refresh=refresh)
 
     def fromNow(self, no_suffix=False, refresh=False):
-        return self._render("fromNow(%s)" % int(no_suffix), refresh)
+        return self._render("fromNow", arg1=int(no_suffix), refresh=refresh)
 
     def fromTime(self, timestamp, no_suffix=False, refresh=False):
-        return self._render("from(moment('%s'),%s)" %
-                            (self._timestamp_as_iso_8601(timestamp),
-                             int(no_suffix)), refresh)
+        return self._render("from", arg1=int(no_suffix), refresh=refresh,
+                            arg2=self._timestamp_as_iso_8601(timestamp))
 
     def toNow(self, no_suffix=False, refresh=False):
-        return self._render("toNow(%s)" % int(no_suffix), refresh)
+        return self._render("toNow", arg1=int(no_suffix), refresh=refresh)
 
     def toTime(self, timestamp, no_suffix=False, refresh=False):
-        return self._render("to(moment('%s'),%s)" %
-                            (self._timestamp_as_iso_8601(timestamp),
-                             int(no_suffix)), refresh)
+        return self._render("to", arg1=int(no_suffix), refresh=refresh,
+                            arg2=self._timestamp_as_iso_8601(timestamp))
 
     def calendar(self, refresh=False):
-        return self._render("calendar()", refresh)
+        return self._render("calendar", refresh=refresh)
 
     def valueOf(self, refresh=False):
-        return self._render("valueOf()", refresh)
+        return self._render("valueOf", refresh=refresh)
 
     def unix(self, refresh=False):
-        return self._render("unix()", refresh)
+        return self._render("unix", refresh=refresh)
 
 
 class Moment(object):
