@@ -49,7 +49,19 @@ class _moment(object):
         return Markup('''%s<script>
 moment.locale("en");%s
 function flask_moment_render(elem) {
-    $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+    timestamp = moment($(elem).data('timestamp'));
+    func = $(elem).data('function');
+    format = $(elem).data('format');
+    timestamp2 = $(elem).data('timestamp2');
+    no_suffix = $(elem).data('nosuffix');
+    args = [];
+    if (format)
+        args.push(format);
+    if (timestamp2)
+        args.push(moment(timestamp2));
+    if (no_suffix)
+        args.push(no_suffix);
+    $(elem).text(timestamp[func].apply(timestamp, args));
     $(elem).removeClass('flask-moment').show();
 }
 function flask_moment_render_all() {
@@ -119,40 +131,47 @@ $(document).ready(function() {
             tz = 'Z'
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
-    def _render(self, format, refresh=False):
+    def _render(self, func, format=None, timestamp2=None, no_suffix=None,
+                refresh=False):
         t = self._timestamp_as_iso_8601(self.timestamp)
+        data_values = 'data-function="%s"' % func
+        if format:
+            data_values += ' data-format="%s"' % format
+        if timestamp2:
+            data_values += ' data-timestamp2="%s"' % timestamp2
+        if no_suffix:
+            data_values += ' data-nosuffix="1"'
         return Markup(('<span class="flask-moment" data-timestamp="%s" ' +
-                       'data-format="%s" data-refresh="%d" ' +
+                       '%s data-refresh="%d" ' +
                        'style="display: none">%s</span>') %
-                      (t, format, int(refresh) * 60000, t))
+                      (t, data_values, int(refresh) * 60000, t))
 
     def format(self, fmt=None, refresh=False):
-        return self._render("format('%s')" % (fmt or ''), refresh)
+        return self._render("format", format=(fmt or ''), refresh=refresh)
 
     def fromNow(self, no_suffix=False, refresh=False):
-        return self._render("fromNow(%s)" % int(no_suffix), refresh)
+        return self._render("fromNow", no_suffix=int(no_suffix),
+                            refresh=refresh)
 
     def fromTime(self, timestamp, no_suffix=False, refresh=False):
-        return self._render("from(moment('%s'),%s)" %
-                            (self._timestamp_as_iso_8601(timestamp),
-                             int(no_suffix)), refresh)
+        return self._render("from", timestamp2=self._timestamp_as_iso_8601(
+            timestamp), no_suffix=int(no_suffix), refresh=refresh)
 
     def toNow(self, no_suffix=False, refresh=False):
-        return self._render("toNow(%s)" % int(no_suffix), refresh)
+        return self._render("toNow", no_suffix=int(no_suffix), refresh=refresh)
 
     def toTime(self, timestamp, no_suffix=False, refresh=False):
-        return self._render("to(moment('%s'),%s)" %
-                            (self._timestamp_as_iso_8601(timestamp),
-                             int(no_suffix)), refresh)
+        return self._render("to", timestamp2=self._timestamp_as_iso_8601(
+            timestamp), no_suffix=int(no_suffix), refresh=refresh)
 
     def calendar(self, refresh=False):
-        return self._render("calendar()", refresh)
+        return self._render("calendar", refresh=refresh)
 
     def valueOf(self, refresh=False):
-        return self._render("valueOf()", refresh)
+        return self._render("valueOf", refresh=refresh)
 
     def unix(self, refresh=False):
-        return self._render("unix()", refresh)
+        return self._render("unix", refresh=refresh)
 
 
 class Moment(object):

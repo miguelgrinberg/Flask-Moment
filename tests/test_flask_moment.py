@@ -153,7 +153,7 @@ class TestPrivateMomentClass(object):
     def test__render_default(self):
         mom = _moment_mock()
         refresh = False
-        rts = mom._render(format="format")  # rts: rendered time stamp
+        rts = mom._render(func="format")  # rts: rendered time stamp
 
         assert isinstance(rts, Markup)
         assert rts.find("thisisnotinthemarkup") < 0
@@ -164,7 +164,7 @@ class TestPrivateMomentClass(object):
     def test__render_refresh(self):
         mom = _moment_mock()
         refresh = True
-        rts = mom._render(format="format", refresh=refresh)
+        rts = mom._render(func="format", refresh=refresh)
 
         assert isinstance(rts, Markup)
         assert not rts.find("thisisnotinthemarkup") > 0
@@ -180,26 +180,24 @@ class TestPrivateMomentClass(object):
 
     def test_fromNow_default(self):
         mom = _moment_mock()
-        no_suffix = False
         rts = mom.fromNow()
 
-        assert rts.find("fromNow(%s)" % int(no_suffix)) > 0
+        assert rts.find("data-function=\"fromNow\"") > 0
 
     def test_fromNow_no_suffix(self):
         mom = _moment_mock()
         no_suffix = True
         rts = mom.fromNow(no_suffix=no_suffix)
 
-        assert rts.find("fromNow(%s)" % int(no_suffix)) > 0
+        assert rts.find("data-function=\"fromNow\" data-nosuffix=\"1\"") > 0
 
     def test_fromTime_default(self):
         mom = _moment_mock()
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
-        no_suffix = False
         rts = mom.fromTime(timestamp=ts)
 
-        assert rts.find("from(moment('%s'),%s)"
-                        % (mom._timestamp_as_iso_8601(ts), int(no_suffix))) > 0
+        assert rts.find("data-function=\"from\" data-timestamp2=\"%s\""
+                        % mom._timestamp_as_iso_8601(ts)) > 0
         assert rts.find("%s" % mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
@@ -209,33 +207,32 @@ class TestPrivateMomentClass(object):
         no_suffix = True
         rts = mom.fromTime(timestamp=ts, no_suffix=no_suffix)
 
-        assert rts.find("from(moment('%s'),%s)"
-                        % (mom._timestamp_as_iso_8601(ts), int(no_suffix))) > 0
+        assert rts.find("data-function=\"from\" data-timestamp2=\"%s\" "
+                        "data-nosuffix=\"1\""
+                        % mom._timestamp_as_iso_8601(ts)) > 0
         assert rts.find("%s" % mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
     def test_toNow_default(self):
         mom = _moment_mock()
-        no_suffix = False
         rts = mom.toNow()
 
-        assert rts.find("toNow(%s)" % int(no_suffix)) > 0
+        assert rts.find("data-function=\"toNow\"") > 0
 
     def test_toNow_no_suffix(self):
         mom = _moment_mock()
         no_suffix = True
         rts = mom.toNow(no_suffix=no_suffix)
 
-        assert rts.find("toNow(%s)" % int(no_suffix)) > 0
+        assert rts.find("data-function=\"toNow\" data-nosuffix=\"1\"") > 0
 
     def test_toTime_default(self):
         mom = _moment_mock()
         ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
-        no_suffix = False
         rts = mom.toTime(timestamp=ts)
 
-        assert rts.find("to(moment('%s'),%s)"
-                        % (mom._timestamp_as_iso_8601(ts), int(no_suffix))) > 0
+        assert rts.find("data-function=\"to\" data-timestamp2=\"%s\""
+                        % mom._timestamp_as_iso_8601(ts)) > 0
         assert rts.find("%s" % mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
@@ -245,8 +242,9 @@ class TestPrivateMomentClass(object):
         no_suffix = True
         rts = mom.toTime(timestamp=ts, no_suffix=no_suffix)
 
-        assert rts.find("to(moment('%s'),%s)"
-                        % (mom._timestamp_as_iso_8601(ts), int(no_suffix))) > 0
+        assert rts.find("data-function=\"to\" data-timestamp2=\"%s\" "
+                        "data-nosuffix=\"1\""
+                        % mom._timestamp_as_iso_8601(ts)) > 0
         assert rts.find("%s" % mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
@@ -254,19 +252,19 @@ class TestPrivateMomentClass(object):
         mom = _moment_mock()
         rts = mom.calendar()
 
-        assert rts.find("data-format=\"calendar()\"") > 0
+        assert rts.find("data-function=\"calendar\"") > 0
 
     def test_valueOf_default(self):
         mom = _moment_mock()
         rts = mom.valueOf()
 
-        assert rts.find("data-format=\"valueOf()\"") > 0
+        assert rts.find("data-function=\"valueOf\"") > 0
 
     def test_unix_default(self):
         mom = _moment_mock()
         rts = mom.unix()
 
-        assert rts.find("data-format=\"unix()\"") > 0
+        assert rts.find("data-function=\"unix\"") > 0
 
 
 class TestPublicMomentClass(object):
