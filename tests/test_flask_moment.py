@@ -62,37 +62,37 @@ class TestFlaskMomentIncludes(object):
         include_moment = _moment.include_moment()
 
         assert isinstance(include_moment, Markup)
-        assert "<script" in str(include_moment)
-        assert default_moment_version + "/moment-with-locales.min.js" in str(
+        assert '<script' in str(include_moment)
+        assert default_moment_version + '/moment-with-locales.min.js' in str(
             include_moment)
 
     def test_include_moment_with_different_version_directly(self):
-        include_moment = _moment.include_moment(version="2.17.1")
+        include_moment = _moment.include_moment(version='2.17.1')
 
         assert isinstance(include_moment, Markup)
-        assert "<script" in str(include_moment)
-        assert "2.17.1/moment-with-locales.min.js" in str(include_moment)
+        assert '<script' in str(include_moment)
+        assert '2.17.1/moment-with-locales.min.js' in str(include_moment)
 
     def test_include_moment_with_local_js_directly(self):
         include_moment = _moment.include_moment(
-            local_js="/path/to/local/moment.js")
+            local_js='/path/to/local/moment.js')
 
         assert isinstance(include_moment, Markup)
-        assert "<script src=\"/path/to/local/moment.js\"></script>" in str(
+        assert '<script src="/path/to/local/moment.js"></script>' in str(
             include_moment)
 
     def test_include_moment_renders_properly(self, app, moment):
-        ts = str(render_template_string("{{ moment.include_moment() }}"))
+        ts = str(render_template_string('{{ moment.include_moment() }}'))
 
-        assert "<script" in ts
-        assert default_moment_version + "/moment-with-locales.min.js" in ts
+        assert '<script' in ts
+        assert default_moment_version + '/moment-with-locales.min.js' in ts
         assert 'moment.defaultFormat' not in ts
 
     def test_include_moment_with_default(self, app, moment):
         app.config['MOMENT_DEFAULT_FORMAT'] = 'foo'
-        ts = str(render_template_string("{{ moment.include_moment() }}"))
-        assert "<script" in ts
-        assert default_moment_version + "/moment-with-locales.min.js" in ts
+        ts = str(render_template_string('{{ moment.include_moment() }}'))
+        assert '<script' in ts
+        assert default_moment_version + '/moment-with-locales.min.js' in ts
         assert 'moment.defaultFormat = "foo";' in ts
 
     def test_include_jquery_default(self):
@@ -110,7 +110,7 @@ class TestFlaskMomentIncludes(object):
 
 
 class TestPrivateMomentClass(object):
-    '''Private refers to the _moment class'''
+    """Tests for the _moment class"""
 
     def test__moment_default(self):
         mom = _moment_mock()
@@ -152,88 +152,85 @@ class TestPrivateMomentClass(object):
 
     def test__render_default(self):
         mom = _moment_mock()
-        refresh = False
-        rts = mom._render(func="format")  # rts: rendered time stamp
+        rts = mom._render(func='format')  # rts: rendered time stamp
 
         assert isinstance(rts, Markup)
-        assert rts.find("thisisnotinthemarkup") < 0
-        assert rts.find("\"format\"") > 0
-        assert rts.find(
-            "data-refresh=\"" + str(int(refresh) * 60000) + "\"") > 0
+        assert rts.find('data-timestamp="') > 0
+        assert rts.find('data-function="format" data-refresh="0"') > 0
 
     def test__render_refresh(self):
         mom = _moment_mock()
-        refresh = True
-        rts = mom._render(func="format", refresh=refresh)
+        rts = mom._render(func='format', refresh=True)
 
         assert isinstance(rts, Markup)
-        assert not rts.find("thisisnotinthemarkup") > 0
-        assert rts.find("\"format\"") > 0
-        assert rts.find(
-            "data-refresh=\"" + str(int(refresh) * 60000) + "\"") > 0
+        assert rts.find('data-timestamp="') > 0
+        assert rts.find('data-function="format" data-refresh="60000"') > 0
 
     def test_format_default(self):
         mom = _moment_mock()
-        rts = mom.format("this-format-please")
+        rts = mom.format('this-format-please')
 
-        assert rts.find("this-format-please") > 0
+        assert rts.find(
+            'data-format="this-format-please" data-refresh="0"') > 0
 
     def test_fromNow_default(self):
         mom = _moment_mock()
         rts = mom.fromNow()
 
-        assert rts.find("data-function=\"fromNow\"") > 0
+        assert rts.find('data-function="fromNow" data-refresh="0"') > 0
 
     def test_fromNow_no_suffix(self):
         mom = _moment_mock()
-        no_suffix = True
-        rts = mom.fromNow(no_suffix=no_suffix)
+        rts = mom.fromNow(no_suffix=True)
 
-        assert rts.find("data-function=\"fromNow\" data-nosuffix=\"1\"") > 0
+        assert rts.find('data-function="fromNow" data-nosuffix="1" '
+                        'data-refresh="0"') > 0
 
     def test_fromTime_default(self):
         mom = _moment_mock()
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
         rts = mom.fromTime(timestamp=ts)
 
-        assert rts.find("data-function=\"from\" data-timestamp2=\"%s\""
-                        % mom._timestamp_as_iso_8601(ts)) > 0
-        assert rts.find("%s" % mom._timestamp_as_iso_8601(
+        assert rts.find('data-function="from" data-timestamp2="{}" '
+                        'data-refresh="0"'.format(
+                            mom._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
     def test_fromTime_no_suffix(self):
         mom = _moment_mock()
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
-        no_suffix = True
-        rts = mom.fromTime(timestamp=ts, no_suffix=no_suffix)
+        rts = mom.fromTime(timestamp=ts, no_suffix=True)
 
-        assert rts.find("data-function=\"from\" data-timestamp2=\"%s\" "
-                        "data-nosuffix=\"1\""
-                        % mom._timestamp_as_iso_8601(ts)) > 0
-        assert rts.find("%s" % mom._timestamp_as_iso_8601(
+        assert rts.find('data-function="from" data-timestamp2="{}" '
+                        'data-nosuffix="1" data-refresh="0"'.format(
+                            mom._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
     def test_toNow_default(self):
         mom = _moment_mock()
         rts = mom.toNow()
 
-        assert rts.find("data-function=\"toNow\"") > 0
+        assert rts.find('data-function="toNow" data-refresh="0"') > 0
 
     def test_toNow_no_suffix(self):
         mom = _moment_mock()
         no_suffix = True
         rts = mom.toNow(no_suffix=no_suffix)
 
-        assert rts.find("data-function=\"toNow\" data-nosuffix=\"1\"") > 0
+        assert rts.find('data-function="toNow" data-nosuffix="1" '
+                        'data-refresh="0"') > 0
 
     def test_toTime_default(self):
         mom = _moment_mock()
         ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
         rts = mom.toTime(timestamp=ts)
 
-        assert rts.find("data-function=\"to\" data-timestamp2=\"%s\""
-                        % mom._timestamp_as_iso_8601(ts)) > 0
-        assert rts.find("%s" % mom._timestamp_as_iso_8601(
+        assert rts.find('data-function="to" data-timestamp2="{}" '
+                        'data-refresh="0"'.format(
+                            mom._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
     def test_toTime_no_suffix(self):
@@ -242,33 +239,33 @@ class TestPrivateMomentClass(object):
         no_suffix = True
         rts = mom.toTime(timestamp=ts, no_suffix=no_suffix)
 
-        assert rts.find("data-function=\"to\" data-timestamp2=\"%s\" "
-                        "data-nosuffix=\"1\""
-                        % mom._timestamp_as_iso_8601(ts)) > 0
-        assert rts.find("%s" % mom._timestamp_as_iso_8601(
+        assert rts.find('data-function="to" data-timestamp2="{}" '
+                        'data-nosuffix="1" data-refresh="0"'.format(
+                            mom._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
     def test_calendar_default(self):
         mom = _moment_mock()
         rts = mom.calendar()
 
-        assert rts.find("data-function=\"calendar\"") > 0
+        assert rts.find('data-function="calendar" data-refresh="0"') > 0
 
     def test_valueOf_default(self):
         mom = _moment_mock()
         rts = mom.valueOf()
 
-        assert rts.find("data-function=\"valueOf\"") > 0
+        assert rts.find('data-function="valueOf" data-refresh="0"') > 0
 
     def test_unix_default(self):
         mom = _moment_mock()
         rts = mom.unix()
 
-        assert rts.find("data-function=\"unix\"") > 0
+        assert rts.find('data-function="unix" data-refresh="0"') > 0
 
 
 class TestPublicMomentClass(object):
-    '''Public refers to the Moment class'''
+    """Tests for the Moment class"""
 
     def test_create_default_no_timestamp(self, app):
         moment = _Moment()

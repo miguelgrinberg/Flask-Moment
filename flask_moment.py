@@ -3,13 +3,15 @@ from datetime import datetime
 from jinja2 import Markup
 from flask import current_app
 
-# //code.jquery.com/jquery-3.4.1.min.js
-default_jquery_version = '3.4.1'
-default_jquery_sri = 'sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo='
+# //code.jquery.com/jquery-3.5.1.min.js
+default_jquery_version = '3.5.1'
+default_jquery_sri = ('sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn'
+                      '/6Z/hRTt8+pR6L4N2')
 
-# //cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js
-default_moment_version = '2.24.0'
-default_moment_sri = 'sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo='
+# //cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment-with-locales.min.js
+default_moment_version = '2.26.0'
+default_moment_sri = ('sha384-WxkyfzCCre+H1hXpoMH2JOqSotIuNoiH5KQ4zCQxIxOSHo4'
+                      '9PeKFlgftAkREuLTR')
 
 
 class _moment(object):
@@ -23,32 +25,32 @@ class _moment(object):
         if not no_js:
             if local_js is not None:
                 if not sri:
-                    js = '<script src="%s"></script>\n' % local_js
+                    js = '<script src="{}"></script>\n'.format(local_js)
                 else:
-                    js = ('<script src="%s" integrity="%s" '
-                          'crossorigin="anonymous"></script>\n'
-                          % (local_js, sri))
+                    js = ('<script src="{}" integrity="{}" '
+                          'crossorigin="anonymous"></script>\n').format(
+                              local_js, sri)
             elif version is not None:
                 js_filename = 'moment-with-locales.min.js' \
                     if StrictVersion(version) >= StrictVersion('2.8.0') \
                     else 'moment-with-langs.min.js'
                 if not sri:
-                    js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
-                         'moment.js/%s/%s"></script>\n' \
-                         % (version, js_filename)
+                    js = ('<script src="//cdnjs.cloudflare.com/ajax/libs/'
+                          'moment.js/{}/{}"></script>\n').format(
+                              version, js_filename)
                 else:
-                    js = '<script src="//cdnjs.cloudflare.com/ajax/libs/' \
-                         'moment.js/%s/%s" integrity="%s" ' \
-                         'crossorigin="anonymous"></script>\n' \
-                         % (version, js_filename, sri)
+                    js = ('<script src="//cdnjs.cloudflare.com/ajax/libs/'
+                          'moment.js/{}/{}" integrity="{}" '
+                          'crossorigin="anonymous"></script>\n').format(
+                              version, js_filename, sri)
 
         default_format = ''
         if 'MOMENT_DEFAULT_FORMAT' in current_app.config:
-            default_format = '\nmoment.defaultFormat = "%s";' % \
-                current_app.config['MOMENT_DEFAULT_FORMAT']
-        return Markup('''%s<script>
-moment.locale("en");%s
-function flask_moment_render(elem) {
+            default_format = '\nmoment.defaultFormat = "{}";'.format(
+                current_app.config['MOMENT_DEFAULT_FORMAT'])
+        return Markup('''{}<script>
+moment.locale("en");{}
+function flask_moment_render(elem) {{
     timestamp = moment($(elem).data('timestamp'));
     func = $(elem).data('function');
     format = $(elem).data('format');
@@ -63,19 +65,19 @@ function flask_moment_render(elem) {
         args.push(no_suffix);
     $(elem).text(timestamp[func].apply(timestamp, args));
     $(elem).removeClass('flask-moment').show();
-}
-function flask_moment_render_all() {
-    $('.flask-moment').each(function() {
+}}
+function flask_moment_render_all() {{
+    $('.flask-moment').each(function() {{
         flask_moment_render(this);
-        if ($(this).data('refresh')) {
-            (function(elem, interval) { setInterval(function() { flask_moment_render(elem) }, interval); })(this, $(this).data('refresh'));
-        }
-    })
-}
-$(document).ready(function() {
+        if ($(this).data('refresh')) {{
+            (function(elem, interval) {{ setInterval(function() {{ flask_moment_render(elem) }}, interval); }})(this, $(this).data('refresh'));
+        }}
+    }})
+}}
+$(document).ready(function() {{
     flask_moment_render_all();
-});
-</script>''' % (js, default_format))  # noqa: E501
+}});
+</script>'''.format(js, default_format))  # noqa: E501
 
     @staticmethod
     def include_jquery(version=default_jquery_version, local_js=None,
@@ -86,19 +88,20 @@ $(document).ready(function() {
             sri = default_jquery_sri
         if local_js is not None:
             if not sri:
-                js = '<script src="%s"></script>\n' % local_js
+                js = '<script src="{}"></script>\n'.format(local_js)
             else:
-                js = ('<script src="%s" integrity="%s" '
-                      'crossorigin="anonymous"></script>\n' % (local_js, sri))
+                js = ('<script src="{}" integrity="{}" '
+                      'crossorigin="anonymous"></script>\n').format(
+                          local_js, sri)
 
         else:
             if not sri:
                 js = ('<script src="//code.jquery.com/' +
-                      'jquery-%s.min.js"></script>') % version
+                      'jquery-{}.min.js"></script>').format(version)
             else:
-                js = ('<script src="//code.jquery.com/jquery-%s.min.js" '
-                      'integrity="%s" crossorigin="anonymous"></script>'
-                      % (version, sri))
+                js = ('<script src="//code.jquery.com/jquery-{}.min.js" '
+                      'integrity="{}" crossorigin="anonymous">'
+                      '</script>').format(version, sri)
         return Markup(js)
 
     @staticmethod
@@ -110,10 +113,10 @@ $(document).ready(function() {
                           'moment.locale(locale);\n</script>')
         if customization:
             return Markup(
-                '<script>\nmoment.locale("%s", %s);\n</script>' % (
+                '<script>\nmoment.locale("{}", {});\n</script>'.format(
                     language, customization))
         return Markup(
-            '<script>\nmoment.locale("%s");\n</script>' % language)
+            '<script>\nmoment.locale("{}");\n</script>'.format(language))
 
     @staticmethod
     def lang(language):
@@ -134,17 +137,17 @@ $(document).ready(function() {
     def _render(self, func, format=None, timestamp2=None, no_suffix=None,
                 refresh=False):
         t = self._timestamp_as_iso_8601(self.timestamp)
-        data_values = 'data-function="%s"' % func
+        data_values = 'data-function="{}"'.format(func)
         if format:
-            data_values += ' data-format="%s"' % format
+            data_values += ' data-format="{}"'.format(format)
         if timestamp2:
-            data_values += ' data-timestamp2="%s"' % timestamp2
+            data_values += ' data-timestamp2="{}"'.format(timestamp2)
         if no_suffix:
             data_values += ' data-nosuffix="1"'
-        return Markup(('<span class="flask-moment" data-timestamp="%s" ' +
-                       '%s data-refresh="%d" ' +
-                       'style="display: none">%s</span>') %
-                      (t, data_values, int(refresh) * 60000, t))
+        return Markup(('<span class="flask-moment" data-timestamp="{}" ' +
+                       '{} data-refresh="{}" ' +
+                       'style="display: none">{}</span>').format(
+                           t, data_values, int(refresh) * 60000, t))
 
     def format(self, fmt=None, refresh=False):
         return self._render("format", format=(fmt or ''), refresh=refresh)
