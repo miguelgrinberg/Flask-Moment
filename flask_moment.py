@@ -8,10 +8,10 @@ default_jquery_version = '3.5.1'
 default_jquery_sri = ('sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn'
                       '/6Z/hRTt8+pR6L4N2')
 
-# //cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment-with-locales.min.js
-default_moment_version = '2.26.0'
-default_moment_sri = ('sha384-WxkyfzCCre+H1hXpoMH2JOqSotIuNoiH5KQ4zCQxIxOSHo4'
-                      '9PeKFlgftAkREuLTR')
+# //cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment-with-locales.min.js
+default_moment_version = '2.27.0'
+default_moment_sri = ('sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXT'
+                      'keJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==')
 
 
 class _moment(object):
