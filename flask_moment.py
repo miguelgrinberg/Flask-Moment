@@ -17,7 +17,7 @@ default_moment_sri = ('sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXT'
 class _moment(object):
     @staticmethod
     def include_moment(version=default_moment_version, local_js=None,
-                       no_js=None, sri=None):
+                       no_js=None, sri=None, with_locales=True):
         js = ''
         if version == default_moment_version and local_js is None and \
                 sri is None:
@@ -31,9 +31,13 @@ class _moment(object):
                           'crossorigin="anonymous"></script>\n').format(
                               local_js, sri)
             elif version is not None:
-                js_filename = 'moment-with-locales.min.js' \
-                    if StrictVersion(version) >= StrictVersion('2.8.0') \
-                    else 'moment-with-langs.min.js'
+                if with_locales:
+                    js_filename = 'moment-with-locales.min.js' \
+                        if StrictVersion(version) >= StrictVersion('2.8.0') \
+                        else 'moment-with-langs.min.js'
+                else:
+                    js_filename = 'moment.min.js'
+                
                 if not sri:
                     js = ('<script src="//cdnjs.cloudflare.com/ajax/libs/'
                           'moment.js/{}/{}"></script>\n').format(
