@@ -301,7 +301,7 @@ class TestSubresourceIntegrity(object):
         include_jquery = _moment.include_jquery(version='2.1.1',
                                                 sri='sha384-12345678')
 
-        assert ('<script src=\"//code.jquery.com/jquery-2.1.1.min.js\"'
+        assert ('<script src=\"https://code.jquery.com/jquery-2.1.1.min.js\"'
                 ' integrity=\"sha384-12345678\" crossorigin=\"anonymous\">'
                 '</script>') == include_jquery
 
@@ -361,7 +361,7 @@ class TestSubresourceIntegrity(object):
         include_moment = _moment.include_moment()
 
         assert include_moment.startswith(
-            '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/{}'
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/{}'
             '/moment-with-locales.min.js" integrity="{}" '
             'crossorigin="anonymous"></script>'.format(
                 default_moment_version, default_moment_sri))
@@ -370,7 +370,7 @@ class TestSubresourceIntegrity(object):
         include_moment = _moment.include_moment(sri='sha384-12345678')
 
         assert include_moment.startswith(
-            '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/{}'
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/{}'
             '/moment-with-locales.min.js" integrity="sha384-12345678" '
             'crossorigin="anonymous"></script>'.format(default_moment_version))
 
@@ -378,7 +378,7 @@ class TestSubresourceIntegrity(object):
                                                 sri='sha384-12345678')
 
         assert include_moment.startswith(
-            '<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0'
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0'
             '/moment-with-langs.min.js" integrity="sha384-12345678" '
             'crossorigin="anonymous"></script>')
 

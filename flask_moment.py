@@ -39,11 +39,11 @@ class _moment(object):
                     js_filename = 'moment.min.js'
                 
                 if not sri:
-                    js = ('<script src="//cdnjs.cloudflare.com/ajax/libs/'
+                    js = ('<script src="https://cdnjs.cloudflare.com/ajax/libs/'
                           'moment.js/{}/{}"></script>\n').format(
                               version, js_filename)
                 else:
-                    js = ('<script src="//cdnjs.cloudflare.com/ajax/libs/'
+                    js = ('<script src="https://cdnjs.cloudflare.com/ajax/libs/'
                           'moment.js/{}/{}" integrity="{}" '
                           'crossorigin="anonymous"></script>\n').format(
                               version, js_filename, sri)
@@ -100,10 +100,10 @@ $(document).ready(function() {{
 
         else:
             if not sri:
-                js = ('<script src="//code.jquery.com/' +
+                js = ('<script src="https://code.jquery.com/' +
                       'jquery-{}.min.js"></script>').format(version)
             else:
-                js = ('<script src="//code.jquery.com/jquery-{}.min.js" '
+                js = ('<script src="https://code.jquery.com/jquery-{}.min.js" '
                       'integrity="{}" crossorigin="anonymous">'
                       '</script>').format(version, sri)
         return Markup(js)
