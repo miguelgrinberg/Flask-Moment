@@ -9,9 +9,9 @@ default_jquery_sri = ('sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn'
                       '/6Z/hRTt8+pR6L4N2')
 
 # //cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment-with-locales.min.js
-default_moment_version = '2.27.0'
-default_moment_sri = ('sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXT'
-                      'keJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==')
+default_moment_version = '2.29.1'
+default_moment_sri = ('sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0'
+                      'g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==')
 
 
 class _moment(object):
@@ -37,7 +37,7 @@ class _moment(object):
                         else 'moment-with-langs.min.js'
                 else:
                     js_filename = 'moment.min.js'
-                
+
                 if not sri:
                     js = ('<script src="https://cdnjs.cloudflare.com/ajax/libs/'
                           'moment.js/{}/{}"></script>\n').format(
