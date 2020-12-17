@@ -9,7 +9,7 @@ from setuptools import setup
 
 setup(
     name='Flask-Moment',
-    version='0.10.0',
+    version='0.11.0',
     url='http://github.com/miguelgrinberg/flask-moment/',
     license='MIT',
     author='Miguel Grinberg',
