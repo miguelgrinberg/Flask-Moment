@@ -1,6 +1,6 @@
 from distutils.version import StrictVersion
 from datetime import datetime
-from jinja2 import Markup
+from markupsafe import Markup
 from flask import current_app
 
 # //code.jquery.com/jquery-3.5.1.min.js
