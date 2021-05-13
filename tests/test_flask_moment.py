@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import render_template_string
-from jinja2 import Markup
+from markupsafe import Markup
 from flask_moment import _moment, Moment, default_jquery_version, \
     default_moment_version, default_moment_sri
 
