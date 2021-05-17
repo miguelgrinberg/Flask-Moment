@@ -127,10 +127,10 @@ Currently the tests are written using pytest.
 
     pip install pytest
 
-To run the tests from the root directory use: `py.test`.
+To run the tests from the root directory use: `pytest`.
 
 Reports on coverage with missing line numbers can be generated using pytest-cov:
 
     pip install pytest-cov
 
-And then running: `py-test --cov-report term-missing --cov=flask_moment`
+And then running: `pytest --cov-report term-missing --cov=flask_moment`
