@@ -1,8 +1,8 @@
 from datetime import datetime
 from flask import render_template_string
 from markupsafe import Markup
-from flask_moment import _moment, Moment, default_jquery_version, \
-    default_moment_version, default_moment_sri
+from flask_moment import _moment, Moment, default_moment_version, \
+    default_moment_sri
 
 
 # Mock Objects
@@ -94,19 +94,6 @@ class TestFlaskMomentIncludes(object):
         assert '<script' in ts
         assert default_moment_version + '/moment-with-locales.min.js' in ts
         assert 'moment.defaultFormat = "foo";' in ts
-
-    def test_include_jquery_default(self):
-        include_jquery = _moment.include_jquery()
-
-        assert isinstance(include_jquery, Markup)
-        assert all([each in str(include_jquery) for each in [
-            'code.jquery.com', default_jquery_version]])
-
-    def test_include_jquery_local(self):
-        include_jquery = _moment.include_jquery(local_js=True)
-
-        assert all([each in str(include_jquery) for each in [
-            '<script', '</script>']])
 
 
 class TestPrivateMomentClass(object):
@@ -268,9 +255,10 @@ class TestPrivateMomentClass(object):
         ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
         rts = mom.diff(ts, 'days')
 
-        assert rts.find('data-function="diff" data-timestamp2="{}" '
-                        'data-units="days" data-refresh="0"'.format(
-            mom._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(
+            'data-function="diff" data-timestamp2="{}" data-units="days" '
+            'data-refresh="0"'.format(
+                mom._timestamp_as_iso_8601(ts))) > 0
         assert rts.find(mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
@@ -279,9 +267,10 @@ class TestPrivateMomentClass(object):
         ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
         rts = mom.diff(ts, 'hours')
 
-        assert rts.find('data-function="diff" data-timestamp2="{}" '
-                        'data-units="hours" data-refresh="0"'.format(
-            mom._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(
+            'data-function="diff" data-timestamp2="{}" data-units="hours" '
+            'data-refresh="0"'.format(
+                mom._timestamp_as_iso_8601(ts))) > 0
         assert rts.find(mom._timestamp_as_iso_8601(
             timestamp=mom.timestamp)) > 0
 
@@ -305,63 +294,6 @@ class TestPublicMomentClass(object):
 
 
 class TestSubresourceIntegrity(object):
-    def test_jquery_with_non_default_version(self):
-        include_jquery = _moment.include_jquery(version='2.0.9')
-
-        assert 'src=\"' in include_jquery
-        assert 'integrity=\"' not in include_jquery
-        assert 'crossorigin=\"' not in include_jquery
-
-    def test_jquery_with_default_version(self):
-        include_jquery = _moment.include_jquery()
-
-        assert 'src=\"' in include_jquery
-        assert 'integrity=\"sha' in include_jquery
-        assert 'crossorigin=\"anonymous\"' in include_jquery
-
-    def test_jquery_from_cdn_without_custom_sri_hash(self):
-        include_jquery = _moment.include_jquery(version='2.1.1',
-                                                sri='sha384-12345678')
-
-        assert ('<script src=\"https://code.jquery.com/jquery-2.1.1.min.js\"'
-                ' integrity=\"sha384-12345678\" crossorigin=\"anonymous\">'
-                '</script>') == include_jquery
-
-    def test_jquery_local_has_no_sri_as_default(self):
-        include_jquery = _moment.include_jquery(local_js=True)
-
-        assert 'src=\"' in include_jquery
-        assert 'integrity=\"' not in include_jquery
-        assert 'crossorigin\"' not in include_jquery
-
-    def test_jquery_local_with_sri(self):
-        include_jquery = _moment.include_jquery(local_js=True,
-                                                sri='sha384-12345678')
-
-        assert ('<script src=\"True\" integrity=\"sha384-12345678\"'
-                ' crossorigin=\"anonymous\"></script>\n') == include_jquery
-
-    def test_disabling_sri_jquery_default(self):
-        include_jquery = _moment.include_jquery(sri=False)
-
-        assert 'src=\"' in include_jquery
-        assert 'integrity=\"' not in include_jquery
-        assert 'crossorigin\"' not in include_jquery
-
-    def test_disabling_sri_jquery_custom_js(self):
-        include_jquery = _moment.include_jquery(local_js=True, sri=False)
-
-        assert 'src=\"' in include_jquery
-        assert 'integrity=\"' not in include_jquery
-        assert 'crossorigin\"' not in include_jquery
-
-    def test_disabling_sri_jquery_custom_version(self):
-        include_jquery = _moment.include_jquery(version='2.1.1', sri=False)
-
-        assert 'src=\"' in include_jquery
-        assert 'integrity=\"' not in include_jquery
-        assert 'crossorigin\"' not in include_jquery
-
     def test_moment_with_non_default_versions(self):
         include_moment = None
 
@@ -400,8 +332,8 @@ class TestSubresourceIntegrity(object):
                                                 sri='sha384-12345678')
 
         assert include_moment.startswith(
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0'
-            '/moment-with-langs.min.js" integrity="sha384-12345678" '
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/'
+            '2.0.0/moment-with-langs.min.js" integrity="sha384-12345678" '
             'crossorigin="anonymous"></script>')
 
     def test_moment_local(self):

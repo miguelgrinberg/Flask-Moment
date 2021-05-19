@@ -1,17 +1,20 @@
 <html>
     <head>
         <title>Flask-Moment example app</title>
-        {{ moment.include_jquery() }}
         {{ moment.include_moment() }}
         <script>
         function load_ajax_timestamp() {
-            $.ajax({
-                url: '{{ url_for('ajax') }}',
-                dataType: 'json'
-            }).done(function(response) {
-                $('#ajax').append('<p>' + response.timestamp + '</p>');
-                flask_moment_render_all();
-            });
+            fetch('{{ url_for("ajax") }}')
+                .then(function(res) {
+                    return res.json();
+                })
+                .then(function(data) {
+                    const ajaxElem = document.getElementById('ajax');
+                    const childElem = document.createElement('p');
+                    childElem.innerHTML = data.timestamp;
+                    ajaxElem.appendChild(childElem);
+                    flask_moment_render_all();
+                })
         }
         </script>
     </head>
