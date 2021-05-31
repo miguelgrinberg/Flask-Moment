@@ -33,6 +33,10 @@
         <p>
             The next Saturday will be in {{ moment(now).toTime(next_saturday) }}, from the time this page was rendered.
         </p>
+        <p>
+            The next Saturday and current time diff: {{ moment(next_saturday).diff(now, 'days') }} days
+            or {{ moment(next_saturday).diff(now, 'hours') }} hours.
+        </p>
         <div id="ajax"></div>
         <a href="#" onclick="load_ajax_timestamp()">Load Ajax timestamp</a>
     </body>

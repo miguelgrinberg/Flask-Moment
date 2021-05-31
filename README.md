@@ -63,6 +63,7 @@ The supported list of display functions is shown below:
 - `moment(timestamp=None, local=False).calendar()`
 - `moment(timestamp=None, local=False).valueOf()`
 - `moment(timestamp=None, local=False).unix()`
+- `moment(timestamp=None, local=False).diff(another_timesatmp, units='days')`
 
 Consult the [moment.js documentation](http://momentjs.com/) for details on these functions.
 
