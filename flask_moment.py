@@ -1,3 +1,4 @@
+import json
 from distutils.version import StrictVersion
 from datetime import datetime
 from markupsafe import Markup
@@ -15,8 +16,14 @@ default_moment_sri = ('sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0'
 
 
 class _moment(object):
-    @staticmethod
-    def include_moment(version=default_moment_version, local_js=None,
+    FUNCTION_DATA_KEY = 'function'
+    TIMESTAMP_DATA_KEY = 'timestamp'
+    PARAMS_DATA_KEY = 'params'
+    FORMAT_DATA_KEY = 'format'
+    REFRESH_DATA_KEY = 'refresh'
+
+    @classmethod
+    def include_moment(cls, version=default_moment_version, local_js=None,
                        no_js=None, sri=None, with_locales=True):
         js = ''
         if version == default_moment_version and local_js is None and \
@@ -52,36 +59,44 @@ class _moment(object):
         if 'MOMENT_DEFAULT_FORMAT' in current_app.config:
             default_format = '\nmoment.defaultFormat = "{}";'.format(
                 current_app.config['MOMENT_DEFAULT_FORMAT'])
-        return Markup('''{}<script>
-moment.locale("en");{}
+        return Markup('''{js}<script>
+moment.locale("en");{default_format}
 function flask_moment_render(elem) {{
-    timestamp = moment($(elem).data('timestamp'));
-    func = $(elem).data('function');
-    format = $(elem).data('format');
-    timestamp2 = $(elem).data('timestamp2');
-    no_suffix = $(elem).data('nosuffix');
-    args = [];
-    if (format)
-        args.push(format);
-    if (timestamp2)
-        args.push(moment(timestamp2));
-    if (no_suffix)
-        args.push(no_suffix);
-    $(elem).text(timestamp[func].apply(timestamp, args));
+    timestamp = moment($(elem).data('{timestamp_data_key}'));
+    func = $(elem).data('{function_data_key}');
+    params = $(elem).data('{params_data_key}');
+    format = $(elem).data('{format_data_key}');
+    func_res = timestamp[func].apply(timestamp, params)
+    // we can't use moment js chaining like moment().add(1, 'days').format('L')
+    // because of one-way communication between python and js code
+    // so we must pass format as parameter to functions that return raw datetime
+    // to pretty print result in templates
+    if (func !== 'format' && format)
+        func_res = func_res.format(format)
+    $(elem).text(func_res);
     $(elem).removeClass('flask-moment').show();
 }}
 function flask_moment_render_all() {{
     $('.flask-moment').each(function() {{
         flask_moment_render(this);
-        if ($(this).data('refresh')) {{
-            (function(elem, interval) {{ setInterval(function() {{ flask_moment_render(elem) }}, interval); }})(this, $(this).data('refresh'));
+        refresh = $(this).data('{refresh_data_key}')
+        if (refresh) {{
+            (function(elem, interval) {{ setInterval(function() {{ flask_moment_render(elem) }}, interval); }})(this, refresh);
         }}
     }})
 }}
 $(document).ready(function() {{
     flask_moment_render_all();
 }});
-</script>'''.format(js, default_format))  # noqa: E501
+</script>'''.format(
+            js=js,
+            default_format=default_format,
+            timestamp_data_key=cls.TIMESTAMP_DATA_KEY,
+            function_data_key=cls.FUNCTION_DATA_KEY,
+            params_data_key=cls.PARAMS_DATA_KEY,
+            format_data_key=cls.FORMAT_DATA_KEY,
+            refresh_data_key=cls.REFRESH_DATA_KEY,
+        ))  # noqa: E501
 
     @staticmethod
     def include_jquery(version=default_jquery_version, local_js=None,
@@ -138,38 +153,53 @@ $(document).ready(function() {{
             tz = 'Z'
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
-    def _render(self, func, format=None, timestamp2=None, no_suffix=None,
-                refresh=False):
-        t = self._timestamp_as_iso_8601(self.timestamp)
-        data_values = 'data-function="{}"'.format(func)
-        if format:
-            data_values += ' data-format="{}"'.format(format)
-        if timestamp2:
-            data_values += ' data-timestamp2="{}"'.format(timestamp2)
-        if no_suffix:
-            data_values += ' data-nosuffix="1"'
-        return Markup(('<span class="flask-moment" data-timestamp="{}" ' +
-                       '{} data-refresh="{}" ' +
-                       'style="display: none">{}</span>').format(
-                           t, data_values, int(refresh) * 60000, t))
+    def _serialize_js_params(self, params):
+        serialized = []
+        for param in params:
+            if isinstance(param, datetime):
+                serialized.append(self._timestamp_as_iso_8601(param))
+            else:
+                serialized.append(param)
+        return json.dumps(serialized)
 
-    def format(self, fmt=None, refresh=False):
-        return self._render("format", format=(fmt or ''), refresh=refresh)
+    def _render(self, func, *params, format=None, refresh=False):
+        t = self._timestamp_as_iso_8601(self.timestamp)
+        data_values = 'data-{}="{}"'.format(self.TIMESTAMP_DATA_KEY, t)
+        data_values += ' data-{}="{}"'.format(self.FUNCTION_DATA_KEY, func)
+        if format:
+            data_values += ' data-{}="{}"'.format(self.FORMAT_DATA_KEY, format)
+        if params:
+            data_values += " data-{}='{}'".format(
+                self.PARAMS_DATA_KEY,
+                self._serialize_js_params(params),
+            )
+        data_values += ' data-{}="{}"'.format(
+            self.REFRESH_DATA_KEY,
+            int(refresh) * 60000
+        )
+
+        return Markup("""
+            <span
+                class="flask-moment"
+                {}
+                style="display: none"
+            >{}</span>
+        """.format(data_values, t))
+
+    def format(self, format, refresh=False):
+        return self._render("format", format, refresh=refresh)
 
     def fromNow(self, no_suffix=False, refresh=False):
-        return self._render("fromNow", no_suffix=int(no_suffix),
-                            refresh=refresh)
+        return self._render("fromNow", no_suffix, refresh=refresh)
 
     def fromTime(self, timestamp, no_suffix=False, refresh=False):
-        return self._render("from", timestamp2=self._timestamp_as_iso_8601(
-            timestamp), no_suffix=int(no_suffix), refresh=refresh)
+        return self._render("from", timestamp, no_suffix, refresh=refresh)
 
     def toNow(self, no_suffix=False, refresh=False):
-        return self._render("toNow", no_suffix=int(no_suffix), refresh=refresh)
+        return self._render("toNow", no_suffix, refresh=refresh)
 
     def toTime(self, timestamp, no_suffix=False, refresh=False):
-        return self._render("to", timestamp2=self._timestamp_as_iso_8601(
-            timestamp), no_suffix=int(no_suffix), refresh=refresh)
+        return self._render("to", timestamp, no_suffix, refresh=refresh)
 
     def calendar(self, refresh=False):
         return self._render("calendar", refresh=refresh)
@@ -179,6 +209,21 @@ $(document).ready(function() {{
 
     def unix(self, refresh=False):
         return self._render("unix", refresh=refresh)
+
+    def diff(self, timestamp, units=None, as_float=False, refresh=False):
+        return self._render(
+            "diff", timestamp, units, as_float, refresh=refresh
+        )
+
+    def add(self, value, units, as_float=False, format=None, refresh=False):
+        return self._render(
+            "add", value, units, as_float, format=format, refresh=refresh
+        )
+
+    def subtract(self, value, units, as_float=False, format=None, refresh=False):
+        return self._render(
+            "subtract", value, units, as_float, format=format, refresh=refresh
+        )
 
 
 class Moment(object):

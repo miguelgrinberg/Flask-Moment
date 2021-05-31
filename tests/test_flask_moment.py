@@ -112,6 +112,12 @@ class TestFlaskMomentIncludes(object):
 class TestPrivateMomentClass(object):
     """Tests for the _moment class"""
 
+    TEST_TIMESTAMP_STR = 'data-' + _moment.TIMESTAMP_DATA_KEY + '="{}"'
+    TEST_FUNC_STR = 'data-' + _moment.FUNCTION_DATA_KEY + '="{}"'
+    TEST_PARAMS_STR = 'data-' + _moment.PARAMS_DATA_KEY + "='{}'"
+    TEST_FORMAT_STR = 'data-' + _moment.FORMAT_DATA_KEY + '="{}"'
+    TEST_REFRESH_STR = 'data-' + _moment.REFRESH_DATA_KEY + '="{}"'
+
     def test__moment_default(self):
         mom = _moment_mock()
         assert mom.timestamp == _datetime_mock.utcnow()
@@ -150,6 +156,20 @@ class TestPrivateMomentClass(object):
         ts = mom._timestamp_as_iso_8601(timestamp=mom.timestamp)
         assert ts == '2017-01-15T22:01:21'
 
+    def test__serialize_js_params_empty(self):
+        mom = _moment_mock()
+        params = []
+        serialized_str = mom._serialize_js_params(params)
+        assert serialized_str == '[]'
+
+    def test__serialize_js_params_various(self):
+        mom = _moment_mock()
+        params = [mom.timestamp, True, False, 'string']
+        serialized_str = mom._serialize_js_params(params)
+        assert serialized_str == '["{}", true, false, "string"]'.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )
+
     def test__render_default(self):
         mom = _moment_mock()
         rts = mom._render(func='format')  # rts: rendered time stamp
@@ -168,70 +188,93 @@ class TestPrivateMomentClass(object):
 
     def test_format_default(self):
         mom = _moment_mock()
-        rts = mom.format('this-format-please')
+        fmt = 'this-format-please'
+        rts = mom.format(fmt)
 
-        assert rts.find(
-            'data-format="this-format-please" data-refresh="0"') > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([fmt])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_fromNow_default(self):
         mom = _moment_mock()
         rts = mom.fromNow()
 
-        assert rts.find('data-function="fromNow" data-refresh="0"') > 0
+        assert rts.find(self.TEST_FUNC_STR.format('fromNow')) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([False])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_fromNow_no_suffix(self):
         mom = _moment_mock()
         rts = mom.fromNow(no_suffix=True)
 
-        assert rts.find('data-function="fromNow" data-nosuffix="1" '
-                        'data-refresh="0"') > 0
+        assert rts.find(self.TEST_FUNC_STR.format('fromNow')) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([True])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_fromTime_default(self):
         mom = _moment_mock()
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
         rts = mom.fromTime(timestamp=ts)
 
-        assert rts.find('data-function="from" data-timestamp2="{}" '
-                        'data-refresh="0"'.format(
-                            mom._timestamp_as_iso_8601(ts))) > 0
-        assert rts.find(mom._timestamp_as_iso_8601(
-            timestamp=mom.timestamp)) > 0
+        assert rts.find(self.TEST_FUNC_STR.format('from')) > 0
+        assert rts.find(self.TEST_TIMESTAMP_STR.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([ts, False])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_fromTime_no_suffix(self):
         mom = _moment_mock()
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
         rts = mom.fromTime(timestamp=ts, no_suffix=True)
 
-        assert rts.find('data-function="from" data-timestamp2="{}" '
-                        'data-nosuffix="1" data-refresh="0"'.format(
-                            mom._timestamp_as_iso_8601(ts))) > 0
-        assert rts.find(mom._timestamp_as_iso_8601(
-            timestamp=mom.timestamp)) > 0
+        assert rts.find(self.TEST_FUNC_STR.format('from')) > 0
+        assert rts.find(self.TEST_TIMESTAMP_STR.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([ts, True])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_toNow_default(self):
         mom = _moment_mock()
         rts = mom.toNow()
 
-        assert rts.find('data-function="toNow" data-refresh="0"') > 0
+        assert rts.find(self.TEST_FUNC_STR.format('toNow')) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_toNow_no_suffix(self):
         mom = _moment_mock()
         no_suffix = True
         rts = mom.toNow(no_suffix=no_suffix)
 
-        assert rts.find('data-function="toNow" data-nosuffix="1" '
-                        'data-refresh="0"') > 0
+        assert rts.find(self.TEST_FUNC_STR.format('toNow')) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([True])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_toTime_default(self):
         mom = _moment_mock()
         ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
         rts = mom.toTime(timestamp=ts)
 
-        assert rts.find('data-function="to" data-timestamp2="{}" '
-                        'data-refresh="0"'.format(
-                            mom._timestamp_as_iso_8601(ts))) > 0
-        assert rts.find(mom._timestamp_as_iso_8601(
-            timestamp=mom.timestamp)) > 0
+        assert rts.find(self.TEST_FUNC_STR.format('to')) > 0
+        assert rts.find(self.TEST_TIMESTAMP_STR.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([ts, False])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_toTime_no_suffix(self):
         mom = _moment_mock()
@@ -239,11 +282,14 @@ class TestPrivateMomentClass(object):
         no_suffix = True
         rts = mom.toTime(timestamp=ts, no_suffix=no_suffix)
 
-        assert rts.find('data-function="to" data-timestamp2="{}" '
-                        'data-nosuffix="1" data-refresh="0"'.format(
-                            mom._timestamp_as_iso_8601(ts))) > 0
-        assert rts.find(mom._timestamp_as_iso_8601(
-            timestamp=mom.timestamp)) > 0
+        assert rts.find(self.TEST_FUNC_STR.format('to')) > 0
+        assert rts.find(self.TEST_TIMESTAMP_STR.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([ts, True])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
     def test_calendar_default(self):
         mom = _moment_mock()
@@ -262,6 +308,60 @@ class TestPrivateMomentClass(object):
         rts = mom.unix()
 
         assert rts.find('data-function="unix" data-refresh="0"') > 0
+
+    def test_diff_default(self):
+        mom = _moment_mock()
+        ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
+        rts = mom.diff(timestamp=ts)
+
+        assert rts.find(self.TEST_FUNC_STR.format('diff')) > 0
+        assert rts.find(self.TEST_TIMESTAMP_STR.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([ts, None, False])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
+
+    def test_diff_days(self):
+        mom = _moment_mock()
+        ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
+        rts = mom.diff(timestamp=ts, units='days')
+
+        assert rts.find(self.TEST_FUNC_STR.format('diff')) > 0
+        assert rts.find(self.TEST_TIMESTAMP_STR.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([ts, 'days', False])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
+
+    def test_add_days(self):
+        mom = _moment_mock()
+        rts = mom.add(1, 'days')
+
+        assert rts.find(self.TEST_FUNC_STR.format('add')) > 0
+        assert rts.find(self.TEST_TIMESTAMP_STR.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([1, 'days', False])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
+
+    def test_subtract_days(self):
+        mom = _moment_mock()
+        rts = mom.subtract(1, 'days')
+
+        assert rts.find(self.TEST_FUNC_STR.format('subtract')) > 0
+        assert rts.find(self.TEST_TIMESTAMP_STR.format(
+            mom._timestamp_as_iso_8601(mom.timestamp)
+        )) > 0
+        assert rts.find(self.TEST_PARAMS_STR.format(
+            mom._serialize_js_params([1, 'days', False])
+        )) > 0
+        assert rts.find(self.TEST_REFRESH_STR.format(0)) > 0
 
 
 class TestPublicMomentClass(object):
