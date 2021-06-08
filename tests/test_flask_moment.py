@@ -311,7 +311,8 @@ class TestMoment(unittest.TestCase):
         assert 'crossorigin' not in include_moment
 
     def test_disabling_moment_custom_version(self):
-        include_moment = self._moment.include_moment(version='2.17.9', sri=False)
+        include_moment = self._moment.include_moment(version='2.17.9',
+                                                     sri=False)
         assert 'src=\"' in include_moment
         assert 'integrity=\"' not in include_moment
         assert 'crossorigin' not in include_moment
