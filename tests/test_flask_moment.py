@@ -263,6 +263,28 @@ class TestPrivateMomentClass(object):
 
         assert rts.find('data-function="unix" data-refresh="0"') > 0
 
+    def test_diff_days(self):
+        mom = _moment_mock()
+        ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
+        rts = mom.diff(ts, 'days')
+
+        assert rts.find('data-function="diff" data-timestamp2="{}" '
+                        'data-units="days" data-refresh="0"'.format(
+            mom._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(mom._timestamp_as_iso_8601(
+            timestamp=mom.timestamp)) > 0
+
+    def test_diff_hours(self):
+        mom = _moment_mock()
+        ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
+        rts = mom.diff(ts, 'hours')
+
+        assert rts.find('data-function="diff" data-timestamp2="{}" '
+                        'data-units="hours" data-refresh="0"'.format(
+            mom._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(mom._timestamp_as_iso_8601(
+            timestamp=mom.timestamp)) > 0
+
 
 class TestPublicMomentClass(object):
     """Tests for the Moment class"""

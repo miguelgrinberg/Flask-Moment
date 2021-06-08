@@ -60,6 +60,7 @@ function flask_moment_render(elem) {{
     format = $(elem).data('format');
     timestamp2 = $(elem).data('timestamp2');
     no_suffix = $(elem).data('nosuffix');
+    units = $(elem).data('units');
     args = [];
     if (format)
         args.push(format);
@@ -67,6 +68,8 @@ function flask_moment_render(elem) {{
         args.push(moment(timestamp2));
     if (no_suffix)
         args.push(no_suffix);
+    if (units)
+        args.push(units);
     $(elem).text(timestamp[func].apply(timestamp, args));
     $(elem).removeClass('flask-moment').show();
 }}
@@ -139,7 +142,7 @@ $(document).ready(function() {{
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
     def _render(self, func, format=None, timestamp2=None, no_suffix=None,
-                refresh=False):
+                units=None, refresh=False):
         t = self._timestamp_as_iso_8601(self.timestamp)
         data_values = 'data-function="{}"'.format(func)
         if format:
@@ -148,6 +151,8 @@ $(document).ready(function() {{
             data_values += ' data-timestamp2="{}"'.format(timestamp2)
         if no_suffix:
             data_values += ' data-nosuffix="1"'
+        if units:
+            data_values += ' data-units="{}"'.format(units)
         return Markup(('<span class="flask-moment" data-timestamp="{}" ' +
                        '{} data-refresh="{}" ' +
                        'style="display: none">{}</span>').format(
@@ -179,6 +184,10 @@ $(document).ready(function() {{
 
     def unix(self, refresh=False):
         return self._render("unix", refresh=refresh)
+
+    def diff(self, timestamp, units, refresh=False):
+        return self._render("diff", timestamp2=self._timestamp_as_iso_8601(
+            timestamp), units=units, refresh=refresh)
 
 
 class Moment(object):
