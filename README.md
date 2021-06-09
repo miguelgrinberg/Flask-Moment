@@ -4,7 +4,7 @@ Flask-Moment
 [![Build status](https://github.com/miguelgrinberg/flask-moment/workflows/build/badge.svg)](https://github.com/miguelgrinberg/flask-moment/actions) [![codecov](https://codecov.io/gh/miguelgrinberg/flask-moment/branch/main/graph/badge.svg)](https://codecov.io/gh/miguelgrinberg/flask-moment)
 
 This extension enhances Jinja2 templates with formatting of dates and times
-using [moment.js](http://momentjs.com/).
+using [moment.js](https://momentjs.com/).
 
 Quick Start
 -----------
@@ -20,7 +20,7 @@ Step 2: In your `<head>` section of your base template add the following code:
         {{ moment.include_moment() }}
     </head>
 
-This extension also supports the [Flask application factory pattern](http://flask.pocoo.org/docs/latest/patterns/appfactories/)
+This extension also supports the [Flask application factory pattern](https://flask.palletsprojects.com/en/latest/patterns/appfactories/)
 by allowing you to create a Moment object and then separately initialize it
 for an app:
 
@@ -54,7 +54,7 @@ Step 3: Render timestamps in your template. For example:
 
 In the second and third examples template variables `then` and `now` are used.
 These must be instances of Python's `datetime` class, and <u>must be "naive"
-objects</u>. See the [documentation](http://docs.python.org/2/library/datetime.html)
+objects</u>. See the [documentation](https://docs.python.org/3/library/datetime.html)
 for a discussion of naive date and time objects. As an example, `now` can be
 set as follows:
 
@@ -83,7 +83,7 @@ The supported list of display functions is shown below:
 - `moment(timestamp=None, local=False).unix()`
 - `moment(timestamp=None, local=False).diff(another_timesatmp, units='days')`
 
-Consult the [moment.js documentation](http://momentjs.com/) for details on
+Consult the [moment.js documentation](https://momentjs.com/) for details on
 these functions.
 
 Auto-Refresh
@@ -100,7 +100,7 @@ Default Format
 The `format()` function can be invoked without arguments, in which case a
 default format of ISO8601 defined by the moment.js library is used. If you
 want to set a different default, you can set the `MOMENT_DEFAULT_FORMAT`
-variable in the Flask configuration. Consult the [moment.js format documentation](http://momentjs.com/docs/#/displaying/format/)
+variable in the Flask configuration. Consult the [moment.js format documentation](https://momentjs.com/docs/#/displaying/format/)
 for a list of accepted tokens.
 
 Internationalization
@@ -156,7 +156,7 @@ fetch are not maliciously manipulated. To do so a cryptographic hash is
 provided that proves integrity.
 
 SRI is enabled by default. If you wish to use another version or want to host
-your own javascript, a [separate hash ](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity#Tools_for_generating_SRI_hashes)
+your own javascript, a [separate hash ](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity#tools_for_generating_sri_hashes)
 can be provided.
 
 Just add `sri=<YOUR-HASH>` when calling `moment.include_moment()`. If no SRI
