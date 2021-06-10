@@ -9,10 +9,38 @@ default_moment_sri = ('sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0'
                       'g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==')
 
 
-class _moment(object):
+class moment(object):
+    """Create a moment object.
+
+    :param timestamp: The ``datetime`` object representing the timestamp.
+    :param local: If ``True``, the ``timestamp`` argument is given in the
+                  local client time. In most cases this argument will be set
+                  to ``False`` and all the timestamps managed by the server
+                  will be in the UTC timezone.
+    """
     @staticmethod
     def include_moment(version=default_moment_version, local_js=None,
                        no_js=None, sri=None, with_locales=True):
+        """Include the moment.js library and the supporting JavaScript code
+        used by this extension.
+
+        This function must be called in the ``<head>`` section of the Jinja
+        template(s) that use this extension.
+
+        :param version: The version of moment.js to include.
+        :param local_js: The URL to import the moment.js library from. Use this
+                         option to import the library from a locally hosted
+                         file.
+        :param no_js: Just add the supporting code for this extension, without
+                      importing the moment.js library. . Use this option if
+                      the library is imported elsewhere in the template. The
+                      supporting JavaScript code for this extension is still
+                      included.
+        :param sri: The SRI hash to use when importing the moment.js library,
+                    or ``None`` if the SRI hash is unknown or disabled.
+        :param with_locales: If ``True``, include the version of moment.js that
+                             has all the locales.
+        """
         js = ''
         if version == default_moment_version and local_js is None and \
                 sri is None:
@@ -88,6 +116,13 @@ document.addEventListener("DOMContentLoaded", flask_moment_render_all);
 
     @staticmethod
     def locale(language='en', auto_detect=False, customization=None):
+        """Configure the moment.js locale.
+
+        :param language: The language code.
+        :param auto_detect: If ``True``, detect the locale from the browser.
+        :param customization: A dictionary with custom options for the locale,
+                              as needed by the moment.js library.
+        """
         if auto_detect:
             return Markup('<script>\nvar locale = '
                           'window.navigator.userLanguage || '
@@ -102,7 +137,12 @@ document.addEventListener("DOMContentLoaded", flask_moment_render_all);
 
     @staticmethod
     def lang(language):
-        return _moment.locale(language)
+        """Set the language. This is a simpler version of the :func:`locale`
+        function.
+
+        :param language: The language code to use.
+        """
+        return moment.locale(language)
 
     def __init__(self, timestamp=None, local=False):
         if timestamp is None:
@@ -134,33 +174,137 @@ document.addEventListener("DOMContentLoaded", flask_moment_render_all);
                            t, data_values, int(refresh) * 60000, t))
 
     def format(self, fmt=None, refresh=False):
+        """Format a moment object with a custom formatting string.
+
+        :param fmt: The formatting specification to use, as documented by the
+                    ``format()`` function frommoment.js.
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("format", format=(fmt or ''), refresh=refresh)
 
     def fromNow(self, no_suffix=False, refresh=False):
+        """Render the moment object as a relative time.
+
+        This formatting option is often called "time ago", since it renders
+        the timestamp using friendly text strings such as "2 hours ago" or
+        "in 3 weeks".
+
+        :param no_suffix: if set to ``True``, the time difference does not
+                          include the suffix (the "ago" or similar).
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("fromNow", no_suffix=int(no_suffix),
                             refresh=refresh)
 
     def fromTime(self, timestamp, no_suffix=False, refresh=False):
+        """Render the moment object as a relative time with respect to a
+        given reference time.
+
+        This function maps to the ``from()`` function from moment.js.
+
+        :param timestamp: The reference ``datetime`` object.
+        :param no_suffix: if set to ``True``, the time difference does not
+                          include the suffix (the "ago" or similar).
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("from", timestamp2=self._timestamp_as_iso_8601(
             timestamp), no_suffix=int(no_suffix), refresh=refresh)
 
     def toNow(self, no_suffix=False, refresh=False):
+        """Render the moment object as a relative time.
+
+        This function renders as the reverse time interval of ``fromNow()``.
+
+        :param no_suffix: if set to ``True``, the time difference does not
+                          include the suffix (the "ago" or similar).
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("toNow", no_suffix=int(no_suffix), refresh=refresh)
 
     def toTime(self, timestamp, no_suffix=False, refresh=False):
+        """Render the moment object as a relative time with respect to a
+        given reference time.
+
+        This function maps to the ``to()`` function from moment.js.
+
+        :param timestamp: The reference ``datetime`` object.
+        :param no_suffix: if set to ``True``, the time difference does not
+                          include the suffix (the "ago" or similar).
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("to", timestamp2=self._timestamp_as_iso_8601(
             timestamp), no_suffix=int(no_suffix), refresh=refresh)
 
     def calendar(self, refresh=False):
+        """Render the moment object as a relative time, either to current time
+        or a given reference timestamp.
+
+        This function renders relative time using day references such as
+        tomorrow, next Sunday, etc.
+
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("calendar", refresh=refresh)
 
     def valueOf(self, refresh=False):
+        """Render the moment object as milliseconds from Unix Epoch.
+
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("valueOf", refresh=refresh)
 
     def unix(self, refresh=False):
+        """Render the moment object as seconds from Unix Epoch.
+
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("unix", refresh=refresh)
 
     def diff(self, timestamp, units, refresh=False):
+        """Render the difference between the moment object and the given
+        timestamp using the provided units.
+
+        :param timestamp: The reference ``datetime`` object.
+        :param units: A time unit such as `years`, `months`, `weeks`, `days`,
+                      `hours`, `minutes` or `seconds`.
+        :param refresh: If set to ``True``, refresh the timestamp at one
+                        minute intervals. If set to ``False``, background
+                        refreshing is disabled. If set to an integer, the
+                        refresh occurs at the indicated interval, given in
+                        minutes.
+        """
         return self._render("diff", timestamp2=self._timestamp_as_iso_8601(
             timestamp), units=units, refresh=refresh)
 
@@ -173,7 +317,7 @@ class Moment(object):
     def init_app(self, app):
         if not hasattr(app, 'extensions'):
             app.extensions = {}
-        app.extensions['moment'] = _moment
+        app.extensions['moment'] = moment
         app.context_processor(self.context_processor)
 
     @staticmethod
