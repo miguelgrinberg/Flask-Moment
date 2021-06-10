@@ -1,5 +1,19 @@
 # Flask-Moment change log
 
+**Release 1.0.0** - 2021-06-11
+
+- Remove dependency on jQuery ([commit](https://github.com/miguelgrinberg/flask-moment/commit/3ab78505303ca5ecf1de1324893918f3b541f2d6)) (thanks **yuxiaoy**!)
+- Add `diff()` function [#78](https://github.com/miguelgrinberg/flask-moment/issues/78) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/79d8f43a6f0d31ce9a81d39954bb3f2f08923028)) (thanks **valerii**!)
+- Import Markup from markupsafe [#71](https://github.com/miguelgrinberg/flask-moment/issues/71) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/b1c48c41d6783585096003dd22bfd0d121ea306e)) (thanks **jn**!)
+- Fix Markup in unit tests [#72](https://github.com/miguelgrinberg/flask-moment/issues/72) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/7566c6b6c2d09ca3b06e3116dd7b5f35ce37b83e)) (thanks **Valerii Tryhubov**!)
+- Sphinx documentation ([commit](https://github.com/miguelgrinberg/flask-moment/commit/e9afd81a602cbf1962af307a6d5b5556ee827381))
+- Update requirements for example application ([commit](https://github.com/miguelgrinberg/flask-moment/commit/1cdc1f16eed3ad945d2774b925a4f9e2f2a54644))
+- Improved project structure ([commit](https://github.com/miguelgrinberg/flask-moment/commit/f79481c84eae62d7d0c8606bfa235f5b223111cf))
+- Update links in documentation [#79](https://github.com/miguelgrinberg/flask-moment/issues/79) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/335d3b3cea648f0eb90137b1cdd3840b7cb737ee)) (thanks **Frank Yu**!)
+- Unit test reorganization ([commit](https://github.com/miguelgrinberg/flask-moment/commit/e29403f78b326b70445ef4659b42aea29de67604))
+- GitHub Actions builds ([commit](https://github.com/miguelgrinberg/flask-moment/commit/1886b76330fd9d1f07985f588ecc5ceaeec5c9fc))
+- Fix documentation typos [#74](https://github.com/miguelgrinberg/flask-moment/issues/74) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/13a35e259292666210445018ea72e6d1b0579486)) (thanks **yuxiaoy**!)
+
 **Release 0.11.0** - 2020-12-17
 
 - Update default moment version and hash [#67](https://github.com/miguelgrinberg/flask-moment/issues/67) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/f4ceefbdab6c9dcf1449127e7cdf7a3aa0049da3)) (thanks **Irakliy Krasnov**!)
