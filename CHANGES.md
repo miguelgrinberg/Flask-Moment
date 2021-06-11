@@ -1,5 +1,9 @@
 # Flask-Moment change log
 
+**Release 1.0.1** - 2021-06-11
+
+- Fix package metadata for release [#80](https://github.com/miguelgrinberg/flask-moment/issues/80) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/19d601e87eae4c0bd7d34f4734de46b931e8b1b2))
+
 **Release 1.0.0** - 2021-06-11
 
 - Remove dependency on jQuery ([commit](https://github.com/miguelgrinberg/flask-moment/commit/3ab78505303ca5ecf1de1324893918f3b541f2d6)) (thanks **yuxiaoy**!)
