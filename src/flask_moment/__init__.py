@@ -315,7 +315,7 @@ class Moment(object):
             self.init_app(app)
 
     def init_app(self, app):
-        if not hasattr(app, 'extensions'):
+        if not hasattr(app, 'extensions'):  # pragma: no cover
             app.extensions = {}
         app.extensions['moment'] = moment
         app.context_processor(self.context_processor)
