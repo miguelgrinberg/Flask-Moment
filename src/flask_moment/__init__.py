@@ -102,7 +102,7 @@ function flask_moment_render_all() {{
     moments.forEach(function(moment) {{
         flask_moment_render(moment);
         const refresh = moment.dataset.refresh;
-        if (refresh) {{
+        if (refresh && refresh > 0) {{
             (function(elem, interval) {{
                 setInterval(function() {{
                     flask_moment_render(elem);
