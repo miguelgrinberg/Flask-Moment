@@ -1,5 +1,9 @@
 # Flask-Moment change log
 
+**Release 1.0.2** - 2021-07-16
+
+- High CPU usage when refresh is disabled [#81](https://github.com/miguelgrinberg/flask-moment/issues/81) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/7ffce2fea01c25d72b4417b408b6cca5119b8a3e))
+
 **Release 1.0.1** - 2021-06-11
 
 - Fix package metadata for release [#80](https://github.com/miguelgrinberg/flask-moment/issues/80) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/19d601e87eae4c0bd7d34f4734de46b931e8b1b2))
