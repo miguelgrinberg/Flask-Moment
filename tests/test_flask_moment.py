@@ -39,6 +39,16 @@ class TestMoment(unittest.TestCase):
         assert default_moment_version + '/moment-with-locales.min.js' in str(
             include_moment)
 
+    def test_include_moment_has_nonce(self):
+        csp_nonce = "somenonce"
+        include_moment = self.moment.include_moment(csp_nonce=csp_nonce)
+        assert isinstance(include_moment, Markup)
+        assert f'<script nonce="{csp_nonce}"' in str(include_moment)
+
+    def test_include_moment_nonce_is_str(self):
+        with self.assertRaises(TypeError):
+            self.moment.include_moment(csp_nonce=1223)
+
     def test_include_moment_with_different_version_directly(self):
         include_moment = self.moment.include_moment(version='2.17.1')
         assert isinstance(include_moment, Markup)
