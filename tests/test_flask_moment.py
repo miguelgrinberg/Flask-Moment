@@ -11,7 +11,7 @@ from flask_moment import Moment, default_moment_version, default_moment_sri
 class TestMoment(unittest.TestCase):
     def setUp(self):
         self.app = Flask(__name__)
-        self.moment = Moment(self.app)
+        self.moment_app = Moment(self.app)
         self.appctx = self.app.app_context()
         self.moment = self.app.extensions['moment']
         self.appctx.push()
@@ -90,6 +90,11 @@ class TestMoment(unittest.TestCase):
         lang = m.lang('en')
         assert isinstance(lang, Markup)
         assert 'moment.locale("en")' in str(lang)
+
+    def test_flask_moment_js(self):
+        js = self.moment_app.flask_moment_js()
+        assert isinstance(js, str)
+        assert 'function flask_moment_render(elem) {' in js
 
     def test__moment_timestamp_passed(self):
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)

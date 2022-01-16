@@ -8,76 +8,7 @@ default_moment_version = '2.29.1'
 default_moment_sri = ('sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0'
                       'g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==')
 
-
-class moment(object):
-    """Create a moment object.
-
-    :param timestamp: The ``datetime`` object representing the timestamp.
-    :param local: If ``True``, the ``timestamp`` argument is given in the
-                  local client time. In most cases this argument will be set
-                  to ``False`` and all the timestamps managed by the server
-                  will be in the UTC timezone.
-    """
-    @staticmethod
-    def include_moment(version=default_moment_version, local_js=None,
-                       no_js=None, sri=None, with_locales=True):
-        """Include the moment.js library and the supporting JavaScript code
-        used by this extension.
-
-        This function must be called in the ``<head>`` section of the Jinja
-        template(s) that use this extension.
-
-        :param version: The version of moment.js to include.
-        :param local_js: The URL to import the moment.js library from. Use this
-                         option to import the library from a locally hosted
-                         file.
-        :param no_js: Just add the supporting code for this extension, without
-                      importing the moment.js library. . Use this option if
-                      the library is imported elsewhere in the template. The
-                      supporting JavaScript code for this extension is still
-                      included.
-        :param sri: The SRI hash to use when importing the moment.js library,
-                    or ``None`` if the SRI hash is unknown or disabled.
-        :param with_locales: If ``True``, include the version of moment.js that
-                             has all the locales.
-        """
-        js = ''
-        if version == default_moment_version and local_js is None and \
-                sri is None:
-            sri = default_moment_sri
-        if not no_js:
-            if local_js is not None:
-                if not sri:
-                    js = '<script src="{}"></script>\n'.format(local_js)
-                else:
-                    js = ('<script src="{}" integrity="{}" '
-                          'crossorigin="anonymous"></script>\n').format(
-                              local_js, sri)
-            elif version is not None:
-                if with_locales:
-                    js_filename = 'moment-with-locales.min.js' \
-                        if StrictVersion(version) >= StrictVersion('2.8.0') \
-                        else 'moment-with-langs.min.js'
-                else:
-                    js_filename = 'moment.min.js'
-
-                if not sri:
-                    js = ('<script src="https://cdnjs.cloudflare.com/ajax/'
-                          'libs/moment.js/{}/{}"></script>\n').format(
-                              version, js_filename)
-                else:
-                    js = ('<script src="https://cdnjs.cloudflare.com/ajax/'
-                          'libs/moment.js/{}/{}" integrity="{}" '
-                          'crossorigin="anonymous"></script>\n').format(
-                              version, js_filename, sri)
-
-        default_format = ''
-        if 'MOMENT_DEFAULT_FORMAT' in current_app.config:
-            default_format = '\nmoment.defaultFormat = "{}";'.format(
-                current_app.config['MOMENT_DEFAULT_FORMAT'])
-        return Markup('''{}<script>
-moment.locale("en");{}
-function flask_moment_render(elem) {{
+js_code = '''function flask_moment_render(elem) {{
     const timestamp = moment(elem.dataset.timestamp);
     const func = elem.dataset.function;
     const format = elem.dataset.format;
@@ -111,8 +42,72 @@ function flask_moment_render_all() {{
         }}
     }})
 }}
-document.addEventListener("DOMContentLoaded", flask_moment_render_all);
-</script>'''.format(js, default_format))  # noqa: E501
+document.addEventListener("DOMContentLoaded", flask_moment_render_all);'''
+
+
+class moment(object):
+    """Create a moment object.
+
+    :param timestamp: The ``datetime`` object representing the timestamp.
+    :param local: If ``True``, the ``timestamp`` argument is given in the
+                  local client time. In most cases this argument will be set
+                  to ``False`` and all the timestamps managed by the server
+                  will be in the UTC timezone.
+    """
+    @classmethod
+    def include_moment(cls, version=default_moment_version, local_js=None,
+                       no_js=None, sri=None, with_locales=True):
+        """Include the moment.js library and the supporting JavaScript code
+        used by this extension.
+
+        This function must be called in the ``<head>`` section of the Jinja
+        template(s) that use this extension.
+
+        :param version: The version of moment.js to include.
+        :param local_js: The URL to import the moment.js library from. Use this
+                         option to import the library from a locally hosted
+                         file.
+        :param no_js: Just add the supporting code for this extension, without
+                      importing the moment.js library. . Use this option if
+                      the library is imported elsewhere in the template. The
+                      supporting JavaScript code for this extension is still
+                      included.
+        :param sri: The SRI hash to use when importing the moment.js library,
+                    or ``None`` if the SRI hash is unknown or disabled.
+        :param with_locales: If ``True``, include the version of moment.js that
+                             has all the locales.
+        """
+        mjs = ''
+        if version == default_moment_version and local_js is None and \
+                with_locales is True and sri is None:
+            sri = default_moment_sri
+        if not no_js:
+            if local_js is not None:
+                if not sri:
+                    mjs = '<script src="{}"></script>\n'.format(local_js)
+                else:
+                    mjs = ('<script src="{}" integrity="{}" '
+                           'crossorigin="anonymous"></script>\n').format(
+                               local_js, sri)
+            elif version is not None:
+                if with_locales:
+                    js_filename = 'moment-with-locales.min.js' \
+                        if StrictVersion(version) >= StrictVersion('2.8.0') \
+                        else 'moment-with-langs.min.js'
+                else:
+                    js_filename = 'moment.min.js'
+
+                if not sri:
+                    mjs = ('<script src="https://cdnjs.cloudflare.com/ajax/'
+                           'libs/moment.js/{}/{}"></script>\n').format(
+                               version, js_filename)
+                else:
+                    mjs = ('<script src="https://cdnjs.cloudflare.com/ajax/'
+                           'libs/moment.js/{}/{}" integrity="{}" '
+                           'crossorigin="anonymous"></script>\n').format(
+                               version, js_filename, sri)
+        return Markup('{}\n<script>\n{}\n</script>\n'''.format(
+            mjs, cls.flask_moment_js()))
 
     @staticmethod
     def locale(language='en', auto_detect=False, customization=None):
@@ -134,6 +129,36 @@ document.addEventListener("DOMContentLoaded", flask_moment_render_all);
                     language, customization))
         return Markup(
             '<script>\nmoment.locale("{}");\n</script>'.format(language))
+
+    @staticmethod
+    def flask_moment_js():
+        """Return the JavaScript supporting code for this extension.
+
+        This method is provided to enable custom configurations that are not
+        supported by ``include_moment``. The return value of this method is
+        a string with raw JavaScript code. This code can be added to your own
+        ``<script>`` tag in a template file::
+
+            <script>
+                {{ moment.flask_moment_js() }}
+            </script>
+
+        Alternatively, the code can be returned in a JavaScript endpoint that
+        can be loaded from the HTML file as an external resource::
+
+            @app.route('/flask-moment.js')
+            def flask_moment_js():
+                return (moment.flask_moment_js(), 200,
+                    {'Content-Type': 'application/javascript'})
+
+        Note: only the code specific to Flask-Moment is included. When using
+        this method, you must include the moment.js library separately.
+        """
+        default_format = ''
+        if 'MOMENT_DEFAULT_FORMAT' in current_app.config:
+            default_format = '\nmoment.defaultFormat = "{}";'.format(
+                current_app.config['MOMENT_DEFAULT_FORMAT'])
+        return '''moment.locale("en");{}\n{}'''.format(default_format, js_code)
 
     @staticmethod
     def lang(language):
@@ -325,6 +350,9 @@ class Moment(object):
         return {
             'moment': current_app.extensions['moment']
         }
+
+    def flask_moment_js(self):
+        return current_app.extensions['moment'].flask_moment_js()
 
     def create(self, timestamp=None):
         return current_app.extensions['moment'](timestamp)
