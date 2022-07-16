@@ -1,5 +1,10 @@
 # Flask-Moment change log
 
+**Release 1.0.3** - 2022-07-16
+
+- Return the raw JavaScript code to enable unsupported use cases [#84](https://github.com/miguelgrinberg/flask-moment/issues/84) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/c79961d46f3b69c7ffc217c2bb35f8289e54b8c4))
+- Remove deprecated `StrictVersion` usage [#85](https://github.com/miguelgrinberg/flask-moment/issues/85) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/02a8392876f84c439f548fe639a8890aef0ede97))
+
 **Release 1.0.2** - 2021-07-16
 
 - High CPU usage when refresh is disabled [#81](https://github.com/miguelgrinberg/flask-moment/issues/81) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/7ffce2fea01c25d72b4417b408b6cca5119b8a3e))
