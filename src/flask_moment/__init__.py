@@ -1,5 +1,5 @@
-from distutils.version import StrictVersion
 from datetime import datetime
+from packaging.version import parse as version_parse
 from markupsafe import Markup
 from flask import current_app
 
@@ -92,7 +92,7 @@ class moment(object):
             elif version is not None:
                 if with_locales:
                     js_filename = 'moment-with-locales.min.js' \
-                        if StrictVersion(version) >= StrictVersion('2.8.0') \
+                        if version_parse(version) >= version_parse('2.8.0') \
                         else 'moment-with-langs.min.js'
                 else:
                     js_filename = 'moment.min.js'
