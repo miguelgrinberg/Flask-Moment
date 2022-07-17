@@ -1,5 +1,9 @@
 # Flask-Moment change log
 
+**Release 1.0.4** - 2022-07-17
+
+- Add packaging as a dependency [#86](https://github.com/miguelgrinberg/flask-moment/issues/86) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/e7bc9332eff0e78c9312100ad8540e2cdda600a9)) (thanks **Chuxiao Feng**!)
+
 **Release 1.0.3** - 2022-07-16
 
 - Return the raw JavaScript code to enable unsupported use cases [#84](https://github.com/miguelgrinberg/flask-moment/issues/84) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/c79961d46f3b69c7ffc217c2bb35f8289e54b8c4))
