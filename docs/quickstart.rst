@@ -40,7 +40,7 @@ case anymore. The ``include_jquery()`` function that existed in older releases
 has now been removed.
 
 The ``include_moment()`` function accepts a few arguments that control settings
-such as the version of ``moment.js`` to use, or wether the library should be
+such as the version of ``moment.js`` to use, or whether the library should be
 imported from a CDN.
 
 Rendering timestamps with Flask-Moment
@@ -57,7 +57,7 @@ as an argument to the ``moment()`` function::
 
     <p>Date: {{ moment(date).format('LL') }}</p>
 
-Some of the rendering functions render the ellapsed time between a datetime 
+Some of the rendering functions render the elapsed time between a datetime 
 object and current time. The following example renders a timestamp in a
 "time ago" style::
 
