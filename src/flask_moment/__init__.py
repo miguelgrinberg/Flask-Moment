@@ -3,10 +3,10 @@ from packaging.version import parse as version_parse
 from markupsafe import Markup
 from flask import current_app
 
-# //cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment-with-locales.min.js
-default_moment_version = '2.29.1'
-default_moment_sri = ('sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0'
-                      'g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==')
+# //cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js
+default_moment_version = '2.29.4'
+default_moment_sri = ('sha512-42PE0rd+wZ2hNXftlM78BSehIGzezNeQuzihiBCvUEB3CVx'
+                      'HvsShF86wBWwQORNxNINlBPuq7rG4WWhNiTVHFg==')
 
 js_code = '''function flask_moment_render(elem) {{
     const timestamp = moment(elem.dataset.timestamp);
