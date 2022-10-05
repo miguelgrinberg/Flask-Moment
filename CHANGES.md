@@ -1,5 +1,10 @@
 # Flask-Moment change log
 
+**Release 1.0.5** - 2022-10-05
+
+- Upgrade moment.js to version 2.29.4 [#89](https://github.com/miguelgrinberg/flask-moment/issues/89) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/4483b94442ce165b7b83afbed9ed9a9a513658bc)) (thanks **Ezequiel Parziale**!)
+- Fix documentation typos [#88](https://github.com/miguelgrinberg/flask-moment/issues/88) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/3fda3bc3640d57fc105c69e2ad6ef8af7aa430c0)) (thanks **Tim Gates**!)
+
 **Release 1.0.4** - 2022-07-17
 
 - Add packaging as a dependency [#86](https://github.com/miguelgrinberg/flask-moment/issues/86) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/e7bc9332eff0e78c9312100ad8540e2cdda600a9)) (thanks **Chuxiao Feng**!)
