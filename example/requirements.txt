@@ -7,5 +7,5 @@ Jinja2==3.0.1
 MarkupSafe==2.0.1
 pkg-resources==0.0.0
 typing-extensions==3.10.0.0
-Werkzeug==2.0.1
+Werkzeug==2.2.3
 zipp==3.4.1
