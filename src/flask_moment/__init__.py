@@ -1,4 +1,6 @@
 from datetime import datetime
+from typing import Union
+
 from packaging.version import parse as version_parse
 from markupsafe import Markup
 from flask import current_app
@@ -48,7 +50,7 @@ document.addEventListener("DOMContentLoaded", flask_moment_render_all);'''
 class moment(object):
     """Create a moment object.
 
-    :param timestamp: The ``datetime`` object representing the timestamp.
+    :param timestamp: The ``datetime`` or valid ISO 8601 ``str`` object representing the timestamp.
     :param local: If ``True``, the ``timestamp`` argument is given in the
                   local client time. In most cases this argument will be set
                   to ``False`` and all the timestamps managed by the server
@@ -175,10 +177,14 @@ class moment(object):
         self.timestamp = timestamp
         self.local = local
 
-    def _timestamp_as_iso_8601(self, timestamp):
+    def _timestamp_as_iso_8601(self, timestamp: Union[str, datetime]):
         tz = ''
         if not self.local:
             tz = 'Z'
+
+        if isinstance(timestamp, str):
+            timestamp = datetime.fromisoformat(timestamp)
+
         return timestamp.strftime('%Y-%m-%dT%H:%M:%S' + tz)
 
     def _render(self, func, format=None, timestamp2=None, no_suffix=None,
@@ -235,7 +241,7 @@ class moment(object):
 
         This function maps to the ``from()`` function from moment.js.
 
-        :param timestamp: The reference ``datetime`` object.
+        :param timestamp: The reference ``datetime`` or valid ISO 8601 ``str`` object.
         :param no_suffix: if set to ``True``, the time difference does not
                           include the suffix (the "ago" or similar).
         :param refresh: If set to ``True``, refresh the timestamp at one
@@ -268,7 +274,7 @@ class moment(object):
 
         This function maps to the ``to()`` function from moment.js.
 
-        :param timestamp: The reference ``datetime`` object.
+        :param timestamp: The reference ``datetime`` or valid ISO 8601 ``str`` object.
         :param no_suffix: if set to ``True``, the time difference does not
                           include the suffix (the "ago" or similar).
         :param refresh: If set to ``True``, refresh the timestamp at one
@@ -321,7 +327,7 @@ class moment(object):
         """Render the difference between the moment object and the given
         timestamp using the provided units.
 
-        :param timestamp: The reference ``datetime`` object.
+        :param timestamp: The reference ``datetime`` or valid ISO 8601 ``str`` object.
         :param units: A time unit such as `years`, `months`, `weeks`, `days`,
                       `hours`, `minutes` or `seconds`.
         :param refresh: If set to ``True``, refresh the timestamp at one

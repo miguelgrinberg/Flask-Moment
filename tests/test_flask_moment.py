@@ -102,6 +102,12 @@ class TestMoment(unittest.TestCase):
         assert m.timestamp == ts
         assert m.local is False
 
+    def test__moment_str_timestamp_passed(self):
+        ts_str = datetime(2017, 1, 15, 22, 47, 6, 479898).isoformat()
+        m = self.moment(timestamp=ts_str)
+        assert m.timestamp == ts_str
+        assert m.local is False
+
     @mock.patch('flask_moment.datetime')
     def test__timestamp_as_iso_8601_default(self, dt):
         dt.utcnow.return_value = datetime(2017, 1, 15, 22, 1, 21, 101361)
@@ -116,8 +122,32 @@ class TestMoment(unittest.TestCase):
         ts = m._timestamp_as_iso_8601(timestamp=m.timestamp)
         assert ts == '2017-01-15T22:01:21'
 
+    def test__timestamp_as_iso_8601_str(self):
+        dt_str = datetime(2017, 1, 15, 22, 1, 21, 101361).isoformat()
+        m = self.moment()
+        ts = m._timestamp_as_iso_8601(timestamp=dt_str)
+        assert ts == '2017-01-15T22:01:21Z'
+
+    def test__timestamp_as_iso_8601_str_local_true(self):
+        dt_str = datetime(2017, 1, 15, 22, 1, 21, 101361).isoformat()
+        m = self.moment(local=True)
+        ts = m._timestamp_as_iso_8601(timestamp=dt_str)
+        assert ts == '2017-01-15T22:01:21'
+
+    def test__invalid_timestamp_as_iso_8601_str(self):
+        m = self.moment(local=True)
+        self.assertRaises(ValueError, m._timestamp_as_iso_8601, 'invalid ISO')
+
     def test__render_default(self):
         m = self.moment()
+        rts = m._render(func='format')  # rts: rendered time stamp
+        assert isinstance(rts, Markup)
+        assert rts.find('data-timestamp="') > 0
+        assert rts.find('data-function="format" data-refresh="0"') > 0
+
+    def test__render_str_default(self):
+        dt_str = datetime(2017, 1, 15, 22, 1, 21, 101361).isoformat()
+        m = self.moment(dt_str)
         rts = m._render(func='format')  # rts: rendered time stamp
         assert isinstance(rts, Markup)
         assert rts.find('data-timestamp="') > 0
@@ -157,6 +187,16 @@ class TestMoment(unittest.TestCase):
         assert rts.find(m._timestamp_as_iso_8601(
             timestamp=m.timestamp)) > 0
 
+    def test_fromTime_default_str(self):
+        m = self.moment()
+        ts_str = datetime(2017, 1, 15, 22, 47, 6, 479898).isoformat()
+        rts = m.fromTime(timestamp=ts_str)
+        assert rts.find('data-function="from" data-timestamp2="{}" '
+                        'data-refresh="0"'.format(
+            m._timestamp_as_iso_8601(ts_str))) > 0
+        assert rts.find(m._timestamp_as_iso_8601(
+            timestamp=m.timestamp)) > 0
+
     def test_fromTime_no_suffix(self):
         m = self.moment()
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
@@ -186,6 +226,16 @@ class TestMoment(unittest.TestCase):
         assert rts.find('data-function="to" data-timestamp2="{}" '
                         'data-refresh="0"'.format(
                             m._timestamp_as_iso_8601(ts))) > 0
+        assert rts.find(m._timestamp_as_iso_8601(
+            timestamp=m.timestamp)) > 0
+
+    def test_toTime_default_str(self):
+        m = self.moment()
+        ts_str = datetime(2020, 1, 15, 22, 47, 6, 479898).isoformat()
+        rts = m.toTime(timestamp=ts_str)
+        assert rts.find('data-function="to" data-timestamp2="{}" '
+                        'data-refresh="0"'.format(
+            m._timestamp_as_iso_8601(ts_str))) > 0
         assert rts.find(m._timestamp_as_iso_8601(
             timestamp=m.timestamp)) > 0
 
@@ -226,6 +276,17 @@ class TestMoment(unittest.TestCase):
         assert rts.find(m._timestamp_as_iso_8601(
             timestamp=m.timestamp)) > 0
 
+    def test_diff_days_str(self):
+        m = self.moment()
+        ts_str = datetime(2020, 1, 15, 22, 47, 6, 479898).isoformat()
+        rts = m.diff(ts_str, 'days')
+        assert rts.find(
+            'data-function="diff" data-timestamp2="{}" data-units="days" '
+            'data-refresh="0"'.format(
+                m._timestamp_as_iso_8601(ts_str))) > 0
+        assert rts.find(m._timestamp_as_iso_8601(
+            timestamp=m.timestamp)) > 0
+
     def test_diff_hours(self):
         m = self.moment()
         ts = datetime(2020, 1, 15, 22, 47, 6, 479898)
@@ -249,6 +310,12 @@ class TestMoment(unittest.TestCase):
         moment = Moment()
         moment.init_app(self.app)
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
+        assert moment.create(timestamp=ts).timestamp == ts
+
+    def test_create_default_with_string_timestamp(self):
+        moment = Moment()
+        moment.init_app(self.app)
+        ts = datetime(2017, 1, 15, 22, 47, 6, 479898).isoformat()
         assert moment.create(timestamp=ts).timestamp == ts
 
     def test_moment_with_non_default_versions(self):
