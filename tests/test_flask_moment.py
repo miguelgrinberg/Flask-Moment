@@ -65,16 +65,16 @@ class TestMoment(unittest.TestCase):
         assert default_moment_version + '/moment-with-locales.min.js' in ts
         assert 'moment.defaultFormat = "foo";' in ts
 
-    @mock.patch('flask_moment.datetime')
-    def test_moment_default(self, dt):
-        dt.utcnow.return_value = 'foo'
+    @mock.patch('flask_moment._naive_now')
+    def test_moment_default(self, now):
+        now.return_value = 'foo'
         m = self.moment()
         assert m.timestamp == 'foo'
         assert m.local is False
 
-    @mock.patch('flask_moment.datetime')
-    def test_moment_local_true(self, dt):
-        dt.utcnow.return_value = 'foo'
+    @mock.patch('flask_moment._naive_now')
+    def test_moment_local_true(self, now):
+        now.return_value = 'foo'
         m = self.moment(local=True)
         assert m.timestamp == 'foo'
         assert m.local is True
@@ -108,16 +108,16 @@ class TestMoment(unittest.TestCase):
         assert m.timestamp == ts
         assert m.local is False
 
-    @mock.patch('flask_moment.datetime')
-    def test__timestamp_as_iso_8601_default(self, dt):
-        dt.utcnow.return_value = datetime(2017, 1, 15, 22, 1, 21, 101361)
+    @mock.patch('flask_moment._naive_now')
+    def test__timestamp_as_iso_8601_default(self, now):
+        now.return_value = datetime(2017, 1, 15, 22, 1, 21, 101361)
         m = self.moment()
         ts = m._timestamp_as_iso_8601(timestamp=m.timestamp)
         assert ts == '2017-01-15T22:01:21Z'
 
-    @mock.patch('flask_moment.datetime')
-    def test__timestamp_as_iso_8601_local_true(self, dt):
-        dt.utcnow.return_value = datetime(2017, 1, 15, 22, 1, 21, 101361)
+    @mock.patch('flask_moment._naive_now')
+    def test__timestamp_as_iso_8601_local_true(self, now):
+        now.return_value = datetime(2017, 1, 15, 22, 1, 21, 101361)
         m = self.moment(local=True)
         ts = m._timestamp_as_iso_8601(timestamp=m.timestamp)
         assert ts == '2017-01-15T22:01:21'
@@ -248,10 +248,10 @@ class TestMoment(unittest.TestCase):
         assert rts.find(m._timestamp_as_iso_8601(
             timestamp=m.timestamp)) > 0
 
-    @mock.patch('flask_moment.datetime')
-    def test_create_default_no_timestamp(self, dt):
+    @mock.patch('flask_moment._naive_now')
+    def test_create_default_no_timestamp(self, now):
         ts = datetime(2017, 1, 15, 22, 1, 21, 101361)
-        dt.utcnow.return_value = ts
+        now.return_value = ts
         moment = Moment()
         moment.init_app(self.app)
         assert moment.create().timestamp == ts

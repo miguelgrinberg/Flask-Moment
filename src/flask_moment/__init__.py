@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from packaging.version import parse as version_parse
 from markupsafe import Markup
 from flask import current_app
@@ -43,6 +43,11 @@ function flask_moment_render_all() {{
     }})
 }}
 document.addEventListener("DOMContentLoaded", flask_moment_render_all);'''
+
+
+def _naive_now():
+    """Return a naive datetime object set to current UTC time."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class moment(object):
@@ -172,7 +177,7 @@ class moment(object):
 
     def __init__(self, timestamp=None, local=False):
         if timestamp is None:
-            timestamp = datetime.utcnow()
+            timestamp = _naive_now()
         self.timestamp = timestamp
         self.local = local
 
