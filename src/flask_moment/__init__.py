@@ -48,7 +48,8 @@ document.addEventListener("DOMContentLoaded", flask_moment_render_all);'''
 class moment(object):
     """Create a moment object.
 
-    :param timestamp: The ``datetime`` object representing the timestamp.
+    :param timestamp: The ``datetime`` object or ISO 8601 string representing
+                      the timestamp.
     :param local: If ``True``, the ``timestamp`` argument is given in the
                   local client time. In most cases this argument will be set
                   to ``False`` and all the timestamps managed by the server
@@ -176,6 +177,8 @@ class moment(object):
         self.local = local
 
     def _timestamp_as_iso_8601(self, timestamp):
+        if isinstance(timestamp, str):
+            return timestamp  # assume it is already in ISO 8601 format
         tz = ''
         if not self.local:
             tz = 'Z'
@@ -235,7 +238,7 @@ class moment(object):
 
         This function maps to the ``from()`` function from moment.js.
 
-        :param timestamp: The reference ``datetime`` object.
+        :param timestamp: The reference ``datetime`` object or ISO 8601 string.
         :param no_suffix: if set to ``True``, the time difference does not
                           include the suffix (the "ago" or similar).
         :param refresh: If set to ``True``, refresh the timestamp at one
@@ -268,7 +271,7 @@ class moment(object):
 
         This function maps to the ``to()`` function from moment.js.
 
-        :param timestamp: The reference ``datetime`` object.
+        :param timestamp: The reference ``datetime`` object or ISO 8601 string.
         :param no_suffix: if set to ``True``, the time difference does not
                           include the suffix (the "ago" or similar).
         :param refresh: If set to ``True``, refresh the timestamp at one
@@ -321,7 +324,7 @@ class moment(object):
         """Render the difference between the moment object and the given
         timestamp using the provided units.
 
-        :param timestamp: The reference ``datetime`` object.
+        :param timestamp: The reference ``datetime`` object or ISO 8601 string.
         :param units: A time unit such as `years`, `months`, `weeks`, `days`,
                       `hours`, `minutes` or `seconds`.
         :param refresh: If set to ``True``, refresh the timestamp at one

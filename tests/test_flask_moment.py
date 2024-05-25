@@ -96,8 +96,14 @@ class TestMoment(unittest.TestCase):
         assert isinstance(js, str)
         assert 'function flask_moment_render(elem) {' in js
 
-    def test__moment_timestamp_passed(self):
+    def test__moment_datetime_passed(self):
         ts = datetime(2017, 1, 15, 22, 47, 6, 479898)
+        m = self.moment(timestamp=ts)
+        assert m.timestamp == ts
+        assert m.local is False
+
+    def test__moment_iso8601_passed(self):
+        ts = '2017-01-15T22:47:06.479898Z'
         m = self.moment(timestamp=ts)
         assert m.timestamp == ts
         assert m.local is False
@@ -115,6 +121,11 @@ class TestMoment(unittest.TestCase):
         m = self.moment(local=True)
         ts = m._timestamp_as_iso_8601(timestamp=m.timestamp)
         assert ts == '2017-01-15T22:01:21'
+
+    def test__timestamp_as_iso_8601_string(self):
+        ts = '2017-01-15T22:47:06.479898Z'
+        m = self.moment(local=True)  # local is ignored in this case
+        assert m._timestamp_as_iso_8601(timestamp=ts) == ts
 
     def test__render_default(self):
         m = self.moment()
