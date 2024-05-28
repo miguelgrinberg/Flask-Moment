@@ -1,5 +1,10 @@
 # Flask-Moment change log
 
+**Release 1.0.6** - 2024-05-28
+
+- Remove use of deprecated `datetime.utcnow()` function ([commit](https://github.com/miguelgrinberg/flask-moment/commit/3216125c9bcf8efa4b6c33746af20a49a84ddcab))
+- Support timestamps passed as ISO 8601 strings [#94](https://github.com/miguelgrinberg/flask-moment/issues/94) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/e9663bbeb810f0b37da1d210fbfc91e7327a3f2e))
+
 **Release 1.0.5** - 2022-10-05
 
 - Upgrade moment.js to version 2.29.4 [#89](https://github.com/miguelgrinberg/flask-moment/issues/89) ([commit](https://github.com/miguelgrinberg/flask-moment/commit/4483b94442ce165b7b83afbed9ed9a9a513658bc)) (thanks **Ezequiel Parziale**!)
