@@ -5,7 +5,8 @@ from flask import current_app
 
 # //cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js
 default_moment_version = '2.30.1'
-default_moment_sri = "sha512-4F1cxYdMiAW98oomSLaygEwmCnIP38pb4Kx70yQYqRwLVCs3DbRumfBq82T08g/4LJ/smbFGFpmeFlQgoDccgg=="
+default_moment_sri = ('sha512-4F1cxYdMiAW98oomSLaygEwmCnIP38pb4Kx70yQYqRwLVCs3'
+                      'DbRumfBq82T08g/4LJ/smbFGFpmeFlQgoDccgg==')
 
 js_code = '''function flask_moment_render(elem) {{
     const timestamp = moment(elem.dataset.timestamp);
